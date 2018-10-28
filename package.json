@@ -1,0 +1,20 @@
+{
+  "name": "carlo",
+  "version": "0.9.4",
+  "description": "Carlo is a framework for rendering Node data structures using Chrome browser.",
+  "repository": "github:GoogleChromeLabs/carlo",
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+  },
+  "keywords": [],
+  "author": "The Chromium Authors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "puppeteer-core": "^1.9.0"
+  }
+}
