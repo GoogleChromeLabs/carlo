@@ -1,5 +1,6 @@
 # repeats from .gitignore
 node_modules
+.profile
 .DS_Store
 .vscode
 package-lock.json
