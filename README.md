@@ -59,7 +59,6 @@ Save file as **example.html**
 <script>
 async function run() {
   const data = await env();
-  const grids = document.getElementById('body');
   for (const type in data) {
     const div = document.createElement('div');
     div.textContent = `${type}: ${data[type]}`;
