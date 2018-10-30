@@ -1,0 +1,26 @@
+{
+  "name": "photobooth-app",
+  "version": "0.9.0",
+  "description": "Photobooth example",
+  "main": "main.js",
+  "scripts": {
+    "pack": "pkg package.json",
+    "run": "node main.js"
+  },
+  "bin": {
+    "photobooth-app": "./main.js"
+  },
+  "pkg": {
+    "scripts": "*.js",
+    "assets": "www/**/*"
+  },
+  "keywords": [],
+  "author": "The Chromium Authors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "carlo": "^0.9.0"
+  },
+  "devDependencies": {
+    "pkg": "^4.3.4"
+  }
+}
