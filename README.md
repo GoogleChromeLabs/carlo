@@ -76,7 +76,7 @@ Execute script on the command line
 node example.js
 ```
 
-Check out more examples with richer UI and RPC-based communication between the Web and Node componenets under the `examples` folder.
+Check out more examples with richer UI and RPC-based communication between the Web and Node components under the `examples` folder.
 
 <!-- [END getstarted] -->
 
