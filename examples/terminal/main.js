@@ -35,6 +35,7 @@ if (!process.env.CARLO) {
 
 (async () => {
   const app = await carlo.launch({ bgcolor: '#2b2e3b' });
+  app.on('exit', () => process.exit());
   app.serveFolder(__dirname + '/www');
   app.serveFolder(__dirname + '/node_modules', 'node_modules');
 
