@@ -30,8 +30,10 @@ body, #terminal {
 Terminal.applyAddon(fit);
 
 async function start() {
-  // Create service.
-  const term = await rpc.create('Terminal');
+  // Lookup service by name.
+  const term = await rpc.lookup('terminal');
+  // Alternatively, create service using factory.
+  // const term = await rpc.create('Terminal');
 
   // Create ui control.
   const termUI = new Terminal({cursorBlink: true});

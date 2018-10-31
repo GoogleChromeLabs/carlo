@@ -37,7 +37,12 @@ if (!process.env.CARLO) {
   const app = await carlo.launch({ bgcolor: '#2b2e3b' });
   app.serveFolder(__dirname + '/www');
   app.serveFolder(__dirname + '/node_modules', 'node_modules');
-  await app.exposeService(Terminal);
+
+  // Expose object to the web rendering context.
+  await app.exposeObject('terminal', new Terminal());
+  // Alternatively, expose factory.
+  await app.exposeFactory(Terminal);
+
   await app.load('index.html');
 })();
 
