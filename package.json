@@ -1,6 +1,6 @@
 {
   "name": "carlo",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "Carlo is a framework for rendering Node data structures using Chrome browser.",
   "repository": "github:GoogleChromeLabs/carlo",
   "engines": {
@@ -9,8 +9,7 @@
   "directories": {
     "lib": "lib"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
