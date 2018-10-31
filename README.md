@@ -1,6 +1,4 @@
-# Carlo
-
-###### [Contributing](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md)
+# Carlo - headful Node app framework
 
 > Carlo provides your Node application with the rich rendering capabilities powered by the Google Chrome browser.
 
@@ -12,6 +10,7 @@
 With Carlo, you can create hybrid applications that use Web stack for rendering and Node for capabilities:
 - For Node applications, you can visualize dynamic state of your Node app using web rendering stack
 - For Web applications, you can expose additional system capabilities accessible from Node
+- Bundle your application into a single executable using [pkg](https://github.com/zeit/pkg).
 
 ###### How does it work?
 
