@@ -82,7 +82,7 @@ Check out more examples with richer UI and RPC-based communication between the W
 
 ## Contributing to Carlo
 
-Check out [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md) to get an overview of Puppeteer development.
+Check out [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md) to get an overview of Carlo development.
 
 <!-- [START faq] -->
 
