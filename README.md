@@ -1,6 +1,9 @@
 # Carlo - headful Node app framework
 
-> Carlo provides your Node application with the rich rendering capabilities powered by the Google Chrome browser.
+> Carlo provides Node applications with the rich rendering capabilities powered by the [Google Chrome](https://www.google.com/chrome/) browser.
+It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project to communicate with the locally installed browser instance, provides remote call infrastructure for communication between Node and the browser.
+
+###### [FAQ](#faq) | [Contributing](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md)
 
 ![image](https://user-images.githubusercontent.com/883973/47826256-0531fc80-dd34-11e8-9c8d-c1b93a6ba631.png)
 
