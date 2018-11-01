@@ -2,7 +2,7 @@
 
 > Carlo provides your Node application with the rich rendering capabilities powered by the Google Chrome browser.
 
-![image](https://user-images.githubusercontent.com/883973/47678948-34a00800-db80-11e8-8275-d376145d2f6a.png)
+![image](https://user-images.githubusercontent.com/883973/47826256-0531fc80-dd34-11e8-9c8d-c1b93a6ba631.png)
 
 <!-- [START usecases] -->
 ###### What can I do?
