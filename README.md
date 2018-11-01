@@ -103,4 +103,9 @@ One can use the [pkg](https://github.com/zeit/pkg) project to package their Node
 
 Carlo prints error message when it can't locate Chrome.
 
+#### Q: What is the minimum Chrome version that Carlo supports?
+
+Chrome Stable channel, versions 70.* are supported.
+
+
 <!-- [END faq] -->
