@@ -27,20 +27,17 @@ With Carlo, you can create hybrid applications that use Web stack for rendering 
 <!-- [START getstarted] -->
 ## Getting Started
 
-### Installation
+### Usage
 
-To use Carlo in your project, run:
+Install Carlo
 
 ```bash
 npm i carlo
-# or "yarn add carlo"
 ```
 
-### Usage
+> Carlo requires at least Node v7.6.0.
 
-Note: Carlo requires at least Node v7.6.0.
-
-**Example** - Visualize local environment:
+**Example** - Display local environment
 
 Save file as **example.js**
 
@@ -48,9 +45,16 @@ Save file as **example.js**
 const carlo = require('carlo');
 
 (async () => {
+  // Launch the browser.
   const app = await carlo.launch();
+
+  // Tell carlo where your web files are located.
   app.serveFolder(__dirname);
+
+  // Expose 'env' function in the web environment.
   await app.exposeFunction('env', _ => process.env);
+
+  // Navigate to the main page of your app.
   await app.load('example.html');
 })();
 ```
@@ -60,6 +64,7 @@ Save file as **example.html**
 ```html
 <script>
 async function run() {
+  // Call the function that was exposed in Node.
   const data = await env();
   for (const type in data) {
     const div = document.createElement('div');
@@ -71,8 +76,7 @@ async function run() {
 <body onload="run()">
 ```
 
-
-Execute script on the command line
+Run your application:
 
 ```bash
 node example.js
