@@ -1,0 +1,6 @@
+node_modules
+package-lock.json
+.profile
+.DS_Store
+.vscode
+.idea
