@@ -43,14 +43,17 @@ body {
   margin-top: 30px;
   color: #ddd;
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 33% 33% 33%;
   grid-gap: 40px;
-  margin: 25px 100px;
+  margin: 25px;
+  overflow: hidden;
 }
 
 .grid-placeholder {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
 }
 
 .grid {
@@ -58,6 +61,16 @@ body {
   display: grid;
   grid-template-columns: 1fr 4fr;
   grid-gap: 4px;
+}
+
+.blur {
+  /**filter: blur(7px);*/
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header {
@@ -79,15 +92,21 @@ body {
 async function onload() {
   const data = await systeminfo();
   const grids = document.getElementById('grids');
-  for (const type in data) {
+  const blur = new Set(['serial', 'uuid', 'sku', 'hostname']);
+  const keys = Object.keys(data).sort();
+  for (const type of keys) {
     const info = data[type];
     const placeholder = createChild(grids, 'div', 'grid-placeholder');
     const grid = createChild(placeholder, 'div', 'grid');
     createChild(grid, 'div', 'header').textContent = type;
-    for (const key in info) {
+    const infos = Object.keys(info).sort();
+    for (const key of infos) {
       if (typeof info[key] === 'object') continue;
       createChild(grid, 'div').textContent = key;
-      createChild(grid, 'div').textContent = info[key];
+      const value = createChild(grid, 'div', 'value');
+      value.textContent = info[key];
+      if (blur.has(key))
+        value.classList.add('blur');
     }
   }
   document.body.style.opacity = 1;

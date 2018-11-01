@@ -24,8 +24,8 @@ const si = require('systeminformation');
   const app = await carlo.launch(
       {
         bgcolor: '#2b2e3b',
-        width: 800,
-        height: 800
+        width: 1000,
+        height: 500
       });
   app.serveFolder(__dirname + '/www');
   await app.exposeFunction('systeminfo', systeminfo);
@@ -35,7 +35,6 @@ const si = require('systeminformation');
 async function systeminfo() {
   const info = {};
   await Promise.all([
-    si.system().then(r => info.system = r),
     si.battery().then(r => info.battery = r),
     si.cpu().then(r => info.cpu = r),
     si.osInfo().then(r => info.osInfo = r),
