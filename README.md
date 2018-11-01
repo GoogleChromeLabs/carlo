@@ -99,4 +99,8 @@ Check out [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/ma
 
 One can use the [pkg](https://github.com/zeit/pkg) project to package their Node app as a Desktop app. Carlo does not provide the branding configurability such as application icon or customizable menus, it focuses on the productivity and Web/Node interoperability instead. Check out the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) example and call `pkg package.json` in it to see how it works.
 
+#### Q: What happens if the user does not have Chrome installed?
+
+Carlo prints error message when it can't locate Chrome.
+
 <!-- [END faq] -->
