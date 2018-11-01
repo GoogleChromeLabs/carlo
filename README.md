@@ -13,14 +13,13 @@ It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project to commu
 With Carlo, you can create hybrid applications that use Web stack for rendering and Node for capabilities:
 - For Node applications, you can visualize dynamic state of your Node app using web rendering stack
 - For Web applications, you can expose additional system capabilities accessible from Node
-- Bundle your application into a single executable using [pkg](https://github.com/zeit/pkg).
+- You can bundle your application into a single executable using [pkg](https://github.com/zeit/pkg).
 
 ###### How does it work?
 
 - Carlo locates Google Chrome installed locally
 - Launches it and establishes connection to Chrome over the process pipe
 - Exposes high level API for rendering in Chrome in Node environment
-- Carlo is based on the [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project
 
 <!-- [END usecases] -->
 
@@ -82,7 +81,7 @@ Run your application:
 node example.js
 ```
 
-Check out more examples with richer UI and RPC-based communication between the Web and Node components under the `examples` folder.
+Check out [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) and [terminal](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/terminal) examples with richer UI and RPC-based communication between the Web and Node under the [examples](https://github.com/GoogleChromeLabs/carlo/tree/master/examples) folder.
 
 <!-- [END getstarted] -->
 

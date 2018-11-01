@@ -17,8 +17,5 @@
     "carlo": "^0.9.0",
     "ndb-node-pty-prebuilt": "^0.8.0",
     "xterm": "^3.8.0"
-  },
-  "devDependencies": {
-    "pkg": "^4.3.4"
   }
 }
