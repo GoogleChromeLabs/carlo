@@ -2,6 +2,7 @@
 
 <!-- [START badges] -->
 [![NPM carlo package](https://img.shields.io/npm/v/carlo.svg)](https://npmjs.org/package/carlo)
+[![Install Size](https://packagephobia.now.sh/badge?p=carlo)](https://packagephobia.now.sh/result?p=carlo)
 <!-- [END badges] -->
 
 > Carlo provides Node applications with the rich rendering capabilities powered by the [Google Chrome](https://www.google.com/chrome/) browser.
