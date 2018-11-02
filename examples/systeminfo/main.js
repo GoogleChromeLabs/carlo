@@ -17,7 +17,8 @@
 'use strict';
 
 const carlo = require('carlo');
-
+const os = require('os');
+const path = require('path');
 const si = require('systeminformation');
 
 (async () => {
@@ -25,7 +26,8 @@ const si = require('systeminformation');
       {
         bgcolor: '#2b2e3b',
         width: 1000,
-        height: 500
+        height: 500,
+        userDataDir: path.join(os.homedir(), '.carlosysinfo')
       });
   app.on('exit', () => process.exit());
   app.serveFolder(__dirname + '/www');
