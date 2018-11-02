@@ -16,7 +16,7 @@
 Launches the browser.
 
 #### App.serveFolder(folder, prefix)
-- `folder, prefix` <[string]> Folder with web content to make available to Chrome.
+- `folder` <[string]> Folder with web content to make available to Chrome.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
 Makes the content of the given folder available to the Chrome web app.
@@ -26,7 +26,6 @@ An example of adding a local `www` folder along with the `node_modules`:
 `main.js`
 ```js
 const carlo = require('carlo');
-const crypto = require('crypto');
 
 carlo.launch().then(async app => {
   app.on('exit', () => process.exit());
@@ -35,9 +34,14 @@ carlo.launch().then(async app => {
   await app.load('index.html');
 });
 ```
-`www/index.html`
+***www***/`index.html`
 ```html
-<script src="node_modules/..."></script> 
+<style>body { white-space: pre; }</style>
+<script>
+fetch('node_modules/carlo/package.json')
+    .then(response => response.text())
+    .then(text => document.body.textContent = text);
+</script>
 ```
 
 #### App.load(uri)
@@ -58,6 +62,8 @@ If the `carloFunction` returns a [Promise], it will be awaited.
 > **NOTE** Functions installed via `App.exposeFunction` survive navigations.
 
 An example of adding an `md5` function into the page:
+
+`main.js`
 ```js
 const carlo = require('carlo');
 const crypto = require('crypto');
@@ -72,6 +78,13 @@ carlo.launch().then(async app => {
 });
 ```
 
+`index.html`
+```html
+<script>
+md5('digest').then(result => document.body.textContent = result);
+</script>
+```
+
 #### App.exposeObject(name, object)
 - `name` <[string]> Name of the object
 - `object` <[Object]> Object to make available to the web surface.
@@ -84,6 +97,7 @@ An example of adding a `world` object into the page:
 
 `main.js`
 ```js
+const EventEmitter = require('events');
 const carlo = require('carlo');
 
 carlo.launch().then(async app => {
@@ -109,10 +123,10 @@ class World extends EventEmitter {
 async function start() {
   const world = await rpc.lookup('world');  // <- lookup service by name.
   world.on('happy', console.log);  // <-- remote objects can emit events.
-  console.log(await world.hello());
+  console.log(await world.hello('Carlo'));
 }
 </script> 
-<body onload="start()"></body>
+<body onload="start()">Open console</body>
 ```
 
 #### App.exposeFactory(factoryConstructor)
@@ -145,11 +159,11 @@ class World {
 <script>
 async function start() {
   const world = await rpc.create('World');  // <- create remote instance.
-  console.log(await world.hello());  // <-- remote call.
+  console.log(await world.hello('Carlo'));  // <-- remote call.
   world.dispose();  // <-- release handle.
 }
-</script> 
-<body onload="start()"></body>
+</script>
+<body onload="start()">Open console</body>
 ```
 
 
@@ -164,17 +178,23 @@ If the function passed to the `App.evaluate` returns a non-[Serializable] value,
 
 Passing arguments to `pageFunction`:
 ```js
+const result = await app.evaluate(() => navigator.userAgent);
+console.log(result);  // prints "<UA>" in Node console
+```
+
+Passing arguments to `pageFunction`:
+```js
 const result = await app.evaluate(x => {
   return Promise.resolve(8 * x);
 }, 7);
-console.log(result);  // prints "56"
+console.log(result);  // prints "56" in Node console
 ```
 
 A string can also be passed in instead of a function:
 ```js
-console.log(await page.evaluate('1 + 2'));  // prints "3"
+console.log(await app.evaluate('1 + 2'));  // prints "3"
 const x = 10;
-console.log(await page.evaluate(`1 + ${x}`));  // prints "11"
+console.log(await app.evaluate(`1 + ${x}`));  // prints "11"
 ```
 
 #### App.exit()
