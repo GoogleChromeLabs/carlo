@@ -28,9 +28,8 @@ With Carlo, you can create hybrid applications that use Web stack for rendering 
 <!-- [END usecases] -->
 
 <!-- [START getstarted] -->
-## Getting Started
 
-### Usage
+## Usage
 
 Install Carlo
 
@@ -89,13 +88,18 @@ Check out [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/exa
 
 <!-- [END getstarted] -->
 
+## API
+
+Check out [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) to get familiar with Carlo API.
+
+
 ## Contributing to Carlo
 
 Check out [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md) to get an overview of Carlo development.
 
 <!-- [START faq] -->
 
-# FAQ
+## FAQ
 
 #### Q: What was the motivation behind this project when we already have Electron and NW.js? How this differs from these platforms, how it helps to achieve something that's not possible/harder with these two?
 
