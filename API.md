@@ -19,7 +19,7 @@ Makes the content of the given folder available to the Chrome web app.
 
 An example of adding a local `www` folder along with the `node_modules`:
 
-**main.js**
+`main.js`
 ```js
 const carlo = require('carlo');
 const crypto = require('crypto');
@@ -31,7 +31,7 @@ carlo.launch().then(async app => {
   await app.load('index.html');
 });
 ```
-**www/index.html**
+`www/index.html`
 ```html
 <script src="node_modules/..."></script> 
 ```
@@ -78,7 +78,7 @@ The method makes the given object available to Chrome.
 
 An example of adding a `world` object into the page:
 
-**main.js**
+`main.js`
 ```js
 const carlo = require('carlo');
 
@@ -99,7 +99,7 @@ class World extends EventEmitter {
 }
 ```
 
-**index.html**
+`index.html`
 ```html
 <script>
 async function start() {
@@ -118,7 +118,7 @@ The method makes the given object factory available to Chrome.
 
 An example of adding a `world` object into the page:
 
-**main.js**
+`main.js`
 ```js
 const carlo = require('carlo');
 
@@ -136,7 +136,7 @@ class World {
 }
 ```
 
-**index.html**
+`index.html`
 ```html
 <script>
 async function start() {
