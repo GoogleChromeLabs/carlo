@@ -1,4 +1,6 @@
-## API
+## API v0.9
+
+> This is a pre-release API, so it is a subject to change. Please use it at your own risk. Once API is validated, it will be bumped to v1.0 and preserved for backwards compatibility.
 
 #### launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
