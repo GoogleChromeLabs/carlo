@@ -2,5 +2,6 @@
 .DS_Store
 *.swp
 *.pyc
+.DS_Store
 .vscode
 package-lock.json

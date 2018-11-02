@@ -9,11 +9,16 @@
   "directories": {
     "lib": "lib"
   },
-  "scripts": {},
+  "scripts": {
+    "lint": "([ \"$CI\" = true ] && eslint --quiet -f codeframe . || eslint .)"
+  },
   "keywords": [],
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "dependencies": {
     "puppeteer-core": "^1.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.8.0"
   }
 }
