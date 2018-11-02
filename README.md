@@ -33,8 +33,14 @@ With Carlo, you can create hybrid applications that use Web stack for rendering 
 
 Install Carlo
 
+#### npm
 ```bash
 npm i carlo
+```
+#### yarn
+
+```bash
+yarn add carlo
 ```
 
 > Carlo requires at least Node v7.6.0.
