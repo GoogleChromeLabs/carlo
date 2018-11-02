@@ -27,6 +27,7 @@ const si = require('systeminformation');
         width: 1000,
         height: 500
       });
+  app.on('exit', () => process.exit());
   app.serveFolder(__dirname + '/www');
   await app.exposeFunction('systeminfo', systeminfo);
   await app.load('index.html');
