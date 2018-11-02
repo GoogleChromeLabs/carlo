@@ -1,5 +1,9 @@
 # Carlo - headful Node app framework
 
+<!-- [START badges] -->
+[![NPM carlo package](https://img.shields.io/npm/v/carlo.svg)](https://npmjs.org/package/carlo)
+<!-- [END badges] -->
+
 > Carlo provides Node applications with the rich rendering capabilities powered by the [Google Chrome](https://www.google.com/chrome/) browser.
 It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project to communicate with the locally installed browser instance, provides remote call infrastructure for communication between Node and the browser.
 
