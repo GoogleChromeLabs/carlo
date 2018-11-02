@@ -27,7 +27,8 @@ const si = require('systeminformation');
         bgcolor: '#2b2e3b',
         width: 1000,
         height: 500,
-        userDataDir: path.join(os.homedir(), '.carlosysinfo')
+        userDataDir: path.join(os.homedir(), '.carlosysinfo'),
+        args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : []
       });
   app.on('exit', () => process.exit());
   app.serveFolder(__dirname + '/www');
