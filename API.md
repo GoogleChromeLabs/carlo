@@ -7,13 +7,13 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
-  * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
-  * [App.load(uri)](#apploaduri)
-  * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
-  * [App.exposeObject(name, object)](#appexposeobjectname-object)
-  * [App.exposeFactory(factoryConstructor)](#appexposefactoryfactoryconstructor)
   * [App.evaluate(pageFunction, ...args)](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
+  * [App.exposeFactory(factoryConstructor)](#appexposefactoryfactoryconstructor)
+  * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
+  * [App.exposeObject(name, object)](#appexposeobjectname-object)
+  * [App.load(uri)](#apploaduri)
+  * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
 
 #### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
@@ -33,39 +33,77 @@ Launches the browser.
 
 Emitted when the App window closes.
 
-#### App.serveFolder(folder, prefix)
-- `folder` <[string]> Folder with web content to make available to Chrome.
-- `prefix` <[string]> Prefix of the URL path to serve from the given folder.
+#### App.evaluate(pageFunction, ...args)
+- `pageFunction` <[function]|[string]> Function to be evaluated in the page context
+- `...args` <...[Serializable]> Arguments to pass to `pageFunction`
+- returns: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
 
-Makes the content of the given folder available to the Chrome web app.
+If the function passed to the `page.evaluate` returns a [Promise], then `page.evaluate` would wait for the promise to resolve and return its value.
 
-An example of adding a local `www` folder along with the `node_modules`:
+If the function passed to the `App.evaluate` returns a non-[Serializable] value, then `page.evaluate` resolves to `undefined`.
+
+Passing arguments to `pageFunction`:
+```js
+const result = await app.evaluate(() => navigator.userAgent);
+console.log(result);  // prints "<UA>" in Node console
+```
+
+Passing arguments to `pageFunction`:
+```js
+const result = await app.evaluate(x => {
+  return Promise.resolve(8 * x);
+}, 7);
+console.log(result);  // prints "56" in Node console
+```
+
+A string can also be passed in instead of a function:
+```js
+console.log(await app.evaluate('1 + 2'));  // prints "3"
+const x = 10;
+console.log(await app.evaluate(`1 + ${x}`));  // prints "11"
+```
+
+#### App.exit()
+- returns: <[Promise]>
+
+Closes the browser window.
+
+#### App.exposeFactory(factoryConstructor)
+- `factoryConstructor` <[function]> Factory of the objects to make available to Chrome.
+
+The method makes the given object factory available to Chrome.
+
+An example of adding a `world` object into the page:
 
 `main.js`
 ```js
 const carlo = require('carlo');
 
 carlo.launch().then(async app => {
+  app.serveFolder(__dirname);
   app.on('exit', () => process.exit());
-  app.serveFolder(__dirname + '/www');
-  app.serveFolder(__dirname + '/node_modules', 'node_modules');
+  await app.exposeFactory(World);  // <-- expose factory to the Web side
   await app.load('index.html');
 });
+
+class World {
+  hello(name) {
+    return 'Hello ' + name;  // <-- return value to the web side.
+  }
+}
 ```
-***www***/`index.html`
+
+`index.html`
 ```html
-<style>body { white-space: pre; }</style>
 <script>
-fetch('node_modules/carlo/package.json')
-    .then(response => response.text())
-    .then(text => document.body.textContent = text);
+async function start() {
+  const world = await rpc.create('World');  // <- create remote instance.
+  console.log(await world.hello('Carlo'));  // <-- remote call.
+  world.dispose();  // <-- release handle.
+}
 </script>
+<body onload="start()">Open console</body>
 ```
-
-#### App.load(uri)
-- `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
-
-Navigates the Chrome web app to the given `uri`.
 
 #### App.exposeFunction(name, carloFunction)
 - `name` <[string]> Name of the function on the window object
@@ -147,88 +185,48 @@ async function start() {
 <body onload="start()">Open console</body>
 ```
 
-#### App.exposeFactory(factoryConstructor)
-- `factoryConstructor` <[function]> Factory of the objects to make available to Chrome.
+#### App.load(uri)
+- `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
 
-The method makes the given object factory available to Chrome.
+Navigates the Chrome web app to the given `uri`.
 
-An example of adding a `world` object into the page:
+#### App.serveFolder(folder, prefix)
+- `folder` <[string]> Folder with web content to make available to Chrome.
+- `prefix` <[string]> Prefix of the URL path to serve from the given folder.
+
+Makes the content of the given folder available to the Chrome web app.
+
+An example of adding a local `www` folder along with the `node_modules`:
 
 `main.js`
 ```js
 const carlo = require('carlo');
 
 carlo.launch().then(async app => {
-  app.serveFolder(__dirname);
   app.on('exit', () => process.exit());
-  await app.exposeFactory(World);  // <-- expose factory to the Web side
+  app.serveFolder(__dirname + '/www');
+  app.serveFolder(__dirname + '/node_modules', 'node_modules');
   await app.load('index.html');
 });
-
-class World {
-  hello(name) {
-    return 'Hello ' + name;  // <-- return value to the web side.
-  }
-}
 ```
-
-`index.html`
+***www***/`index.html`
 ```html
+<style>body { white-space: pre; }</style>
 <script>
-async function start() {
-  const world = await rpc.create('World');  // <- create remote instance.
-  console.log(await world.hello('Carlo'));  // <-- remote call.
-  world.dispose();  // <-- release handle.
-}
+fetch('node_modules/carlo/package.json')
+    .then(response => response.text())
+    .then(text => document.body.textContent = text);
 </script>
-<body onload="start()">Open console</body>
 ```
 
 
-#### App.evaluate(pageFunction, ...args)
-- `pageFunction` <[function]|[string]> Function to be evaluated in the page context
-- `...args` <...[Serializable]> Arguments to pass to `pageFunction`
-- returns: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
-
-If the function passed to the `page.evaluate` returns a [Promise], then `page.evaluate` would wait for the promise to resolve and return its value.
-
-If the function passed to the `App.evaluate` returns a non-[Serializable] value, then `page.evaluate` resolves to `undefined`.
-
-Passing arguments to `pageFunction`:
-```js
-const result = await app.evaluate(() => navigator.userAgent);
-console.log(result);  // prints "<UA>" in Node console
-```
-
-Passing arguments to `pageFunction`:
-```js
-const result = await app.evaluate(x => {
-  return Promise.resolve(8 * x);
-}, 7);
-console.log(result);  // prints "56" in Node console
-```
-
-A string can also be passed in instead of a function:
-```js
-console.log(await app.evaluate('1 + 2'));  // prints "3"
-const x = 10;
-console.log(await app.evaluate(`1 + ${x}`));  // prints "11"
-```
-
-#### App.exit()
-- returns: <[Promise]>
-
-Closes the browser window.
-
-
+[Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+[Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
-[Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+[Serializable]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
 [boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
-[Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
 [function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
-[Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
-[Serializable]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
