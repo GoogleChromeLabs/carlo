@@ -2,7 +2,20 @@
 
 > This is a pre-release API, so it is a subject to change. Please use it at your own risk. Once API is validated, it will be bumped to v1.0 and preserved for backwards compatibility.
 
-#### launch([options])
+##### Table of Contents
+
+- [carlo.launch([options])](#carlolaunchoptions)
+- [class: App](#class-app)
+  * [event: 'exit'](#event-exit)
+  * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
+  * [App.load(uri)](#apploaduri)
+  * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
+  * [App.exposeObject(name, object)](#appexposeobjectname-object)
+  * [App.exposeFactory(factoryConstructor)](#appexposefactoryfactoryconstructor)
+  * [App.evaluate(pageFunction, ...args)](#appevaluatepagefunction-args)
+  * [App.exit()](#appexit)
+
+#### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
   - `width` <[number]> app window width in pixels.
   - `height` <[number]> app window height in pixels.
@@ -12,8 +25,13 @@
   - `args` <[Array]<[string]>> Additional arguments to pass to the browser instance. The list of Chromium flags can be found [here](https://peter.sh/experiments/chromium-command-line-switches/).
 - returns: <[Promise]<App>> Promise which resolves to the app instance.
 
-
 Launches the browser.
+
+### class: App
+
+#### event: 'exit'
+
+Emitted when the App window closes.
 
 #### App.serveFolder(folder, prefix)
 - `folder` <[string]> Folder with web content to make available to Chrome.
@@ -125,7 +143,7 @@ async function start() {
   world.on('happy', console.log);  // <-- remote objects can emit events.
   console.log(await world.hello('Carlo'));
 }
-</script> 
+</script>
 <body onload="start()">Open console</body>
 ```
 
