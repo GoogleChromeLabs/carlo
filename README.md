@@ -5,8 +5,8 @@
 [![Install Size](https://packagephobia.now.sh/badge?p=carlo)](https://packagephobia.now.sh/result?p=carlo)
 <!-- [END badges] -->
 
-> Carlo provides Node applications with the rich rendering capabilities powered by the [Google Chrome](https://www.google.com/chrome/) browser.
-It uses [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project to communicate with the locally installed browser instance, provides remote call infrastructure for communication between Node and the browser.
+> Carlo provides Node applications with [Google Chrome](https://www.google.com/chrome/) rendering capabilities.
+Carlo communicates with the locally-installed browser instance using the [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project. Carlo also provides remote call infrastructure for communication between Node and the browser.
 
 ###### [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) | [FAQ](#faq) | [Contributing](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md)
 
