@@ -23,14 +23,13 @@
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `.profile`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
   - `args` <[Array]<[string]>> Additional arguments to pass to the browser instance. The list of Chromium flags can be found [here](https://peter.sh/experiments/chromium-command-line-switches/).
-- returns: <[Promise]<App>> Promise which resolves to the app instance.
+- returns: <[Promise]<[App]>> Promise which resolves to the app instance.
 
 Launches the browser.
 
 ### class: App
 
 #### event: 'exit'
-
 Emitted when the App window closes.
 
 #### App.evaluate(pageFunction, ...args)
@@ -187,6 +186,7 @@ async function start() {
 
 #### App.load(uri)
 - `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
+- returns: <[Promise]>
 
 Navigates the Chrome web app to the given `uri`.
 
@@ -220,6 +220,7 @@ fetch('node_modules/carlo/package.json')
 ```
 
 
+[App]: #class-app
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
 [Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
