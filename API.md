@@ -14,7 +14,7 @@
   * [App.exposeObject(name, object)](#appexposeobjectname-object)
   * [App.load(uri)](#apploaduri)
   * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
-  * [App.serveOrigin(origin)](#appserveorigin-origin)
+  * [App.serveOrigin(origin)](#appserveoriginorigin)
 
 #### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
