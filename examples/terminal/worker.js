@@ -18,26 +18,34 @@
 
 'use strict';
 
-const child_process = require('child_process');
-const carlo = require('carlo');
+const EventEmitter = require('events');
+const os = require('os');
+const pty = require('ndb-node-pty-prebuilt');
 const { rpc, rpc_process } = require('carlo/rpc');
 
-class TerminalApp {
+class Terminal extends EventEmitter {
   constructor() {
-    this.launch_();
+    super();
+    const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+    this.term_ = pty.spawn(shell, [], {
+      name: 'xterm-color',
+      cwd: process.env.PWD,
+      env: process.env
+    });
+    this.term_.on('data', data => this.emit('data', data));
   }
 
-  async launch_() {
-    const app = await carlo.launch({ bgcolor: '#2b2e3b' });
-    app.on('exit', () => process.exit());
-    app.serveFolder(__dirname + '/www');
-    app.serveFolder(__dirname + '/node_modules', 'node_modules');
-    await app.load('index.html', rpc.handle(this));
+  resize(cols, rows) {
+    this.term_.resize(cols, rows);
   }
 
-  createTerminal() {
-    return rpc_process.spawn('worker.js');
+  write(data) {
+    this.term_.write(data);
+  }
+
+  dispose() {
+    process.kill(this._term.pid);
   }
 }
 
-new TerminalApp();
+rpc_process.init(() => rpc.handle(new Terminal));

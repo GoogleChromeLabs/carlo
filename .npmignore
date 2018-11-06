@@ -1,13 +1,16 @@
 # repeats from .gitignore
-node_modules
 .DS_Store
 .eslintrc.js
 .eslintignore
 .profile
 .vscode
+node_modules
 package-lock.json
+rpc/node_modules
+rpc/package-lock.json
 
+.npmignore
 examples
 CONTRIBUTING.md
-.npmignore
 API.md
+rpc/test.js

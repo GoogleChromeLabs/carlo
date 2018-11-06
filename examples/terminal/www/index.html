@@ -29,11 +29,9 @@ body, #terminal {
 <script>
 Terminal.applyAddon(fit);
 
-async function start() {
-  // Lookup service by name.
-  const term = await rpc.lookup('terminal');
-  // Alternatively, create service using factory.
-  // const term = await rpc.create('Terminal');
+async function load(terminalApp) {
+  // Create backend control.
+  const term = await terminalApp.createTerminal();
 
   // Create ui control.
   const termUI = new Terminal({cursorBlink: true});
@@ -42,7 +40,7 @@ async function start() {
 
   // Wire them together.
   termUI.on('data', data => term.write(data));
-  term.on('data', data => termUI.write(data));
+  term.on('data', rpc.handle(data => termUI.write(data)));
   termUI.on('resize', size => term.resize(size.cols, size.rows));
 
   // Init.
@@ -51,7 +49,7 @@ async function start() {
 }
 </script> 
 
-<body onload="start()">
+<body>
   <div id="terminal"></div>
 </body>
 </html>

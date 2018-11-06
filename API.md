@@ -9,10 +9,8 @@
   * [event: 'exit'](#event-exit)
   * [App.evaluate(pageFunction, ...args)](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
-  * [App.exposeFactory(factoryConstructor)](#appexposefactoryfactoryconstructor)
   * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
-  * [App.exposeObject(name, object)](#appexposeobjectname-object)
-  * [App.load(uri)](#apploaduri)
+  * [App.load(uri, params)](#apploaduri-params)
   * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
   * [App.serveOrigin(origin)](#appserveoriginorigin)
 
@@ -24,7 +22,7 @@
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `.profile`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
   - `args` <[Array]<[string]>> Additional arguments to pass to the browser instance. The list of Chromium flags can be found [here](https://peter.sh/experiments/chromium-command-line-switches/).
-- returns: <[Promise]<[App]>> Promise which resolves to the app instance.
+- `return`: <[Promise]<[App]>> Promise which resolves to the app instance.
 
 Launches the browser.
 
@@ -36,7 +34,7 @@ Emitted when the App window closes.
 #### App.evaluate(pageFunction, ...args)
 - `pageFunction` <[function]|[string]> Function to be evaluated in the page context
 - `...args` <...[Serializable]> Arguments to pass to `pageFunction`
-- returns: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
+- `return`: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
 
 If the function passed to the `page.evaluate` returns a [Promise], then `page.evaluate` would wait for the promise to resolve and return its value.
 
@@ -64,51 +62,14 @@ console.log(await app.evaluate(`1 + ${x}`));  // prints "11"
 ```
 
 #### App.exit()
-- returns: <[Promise]>
+- `return`: <[Promise]>
 
 Closes the browser window.
-
-#### App.exposeFactory(factoryConstructor)
-- `factoryConstructor` <[function]> Factory of the objects to make available to Chrome.
-
-The method makes the given object factory available to Chrome.
-
-An example of adding a `world` object into the page:
-
-`main.js`
-```js
-const carlo = require('carlo');
-
-carlo.launch().then(async app => {
-  app.serveFolder(__dirname);
-  app.on('exit', () => process.exit());
-  await app.exposeFactory(World);  // <-- expose factory to the Web side
-  await app.load('index.html');
-});
-
-class World {
-  hello(name) {
-    return 'Hello ' + name;  // <-- return value to the web side.
-  }
-}
-```
-
-`index.html`
-```html
-<script>
-async function start() {
-  const world = await rpc.create('World');  // <- create remote instance.
-  console.log(await world.hello('Carlo'));  // <-- remote call.
-  world.dispose();  // <-- release handle.
-}
-</script>
-<body onload="start()">Open console</body>
-```
 
 #### App.exposeFunction(name, carloFunction)
 - `name` <[string]> Name of the function on the window object
 - `carloFunction` <[function]> Callback function which will be called in Carlo's context.
-- returns: <[Promise]>
+- `return`: <[Promise]>
 
 The method adds a function called `name` on the page's `window` object.
 When called, the function executes `carloFunction` in node.js and returns a [Promise] which resolves to the return value of `carloFunction`.
@@ -141,34 +102,31 @@ md5('digest').then(result => document.body.textContent = result);
 </script>
 ```
 
-#### App.exposeObject(name, object)
-- `name` <[string]> Name of the object
-- `object` <[Object]> Object to make available to the web surface.
+#### App.load(uri, params)
+- `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
+- `params` <*> Optional parameters to pass the the web application. Parameters can be
+primitive types, <[Array]>, <[Object]> or [rpc](https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md) `handles`.
+- `return`: <[Promise]> <*> result of the `load()` invocation, can be rpc handle.
 
-The method makes the given object available to Chrome.
-
-> **NOTE** Communication between Chrome and Node takes place over the wired protocol, so the actual object Chrome is getting is a handle to the original object with the original methods available on that handle via RPC.
-
-An example of adding a `world` object into the page:
+Navigates the Chrome web app to the given `uri`, loads the target page and calls the `load`
+function in the context of the loaded page.
 
 `main.js`
 ```js
-const EventEmitter = require('events');
-const carlo = require('carlo');
+const carlo = require('./index.js');
+const { rpc } = require('./rpc');
 
 carlo.launch().then(async app => {
   app.serveFolder(__dirname);
   app.on('exit', () => process.exit());
-  const world = new World();  // <-- create object
-  world.on('happy', console.log);  // <-- subscribe to events
-  await app.exposeObject('world', world);  // <-- expose it to the Web side
-  await app.load('index.html');
+  const frontend = await app.load('index.html', rpc.handle(new Backend));
+  console.log(await frontend.hello('from backend'));
 });
 
-class World extends EventEmitter {
+class Backend {
   hello(name) {
-    this.emit('happy', 'happy event');  // <-- emit event that is handled on the Web side.
-    return 'Hello ' + name;  // <-- return value to the Web side.
+    console.log('Hello ' + name);
+    return 'Backend is happy';
   }
 }
 ```
@@ -176,20 +134,20 @@ class World extends EventEmitter {
 `index.html`
 ```html
 <script>
-async function start() {
-  const world = await rpc.lookup('world');  // <- lookup service by name.
-  world.on('happy', console.log);  // <-- remote objects can emit events.
-  console.log(await world.hello('Carlo'));
+class Frontend {
+  hello(name) {
+    console.log('Hello ' + name);
+    return 'Frontend is happy';
+  }
+}
+
+async function load(backend) {
+  console.log(await backend.hello('from frontend'));
+  return rpc.handle(new Frontend);
 }
 </script>
-<body onload="start()">Open console</body>
+<body>Open console</body>
 ```
-
-#### App.load(uri)
-- `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
-- returns: <[Promise]>
-
-Navigates the Chrome web app to the given `uri`.
 
 #### App.serveFolder(folder, prefix)
 - `folder` <[string]> Folder with web content to make available to Chrome.
