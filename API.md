@@ -14,6 +14,7 @@
   * [App.exposeObject(name, object)](#appexposeobjectname-object)
   * [App.load(uri)](#apploaduri)
   * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
+  * [App.serveOrigin(origin)](#appserveorigin-origin)
 
 #### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
@@ -219,6 +220,34 @@ fetch('node_modules/carlo/package.json')
 </script>
 ```
 
+#### App.serveOrigin(origin)
+- `origin` <[origin]> Origin to serve web content from.
+
+Fetches Carlo content from the specified origin instead of reading it from the
+file system, eg `http://localhost:8080`.
+This mode can be used for the fast development mode available in web frameworks.
+
+An example of adding the local `http://localhost:8080` origin:
+
+`main.js`
+```js
+const carlo = require('carlo');
+
+carlo.launch().then(async app => {
+  app.on('exit', () => process.exit());
+  app.serveOrigin('http://localhost:8080');  // <-- fetch from the local server
+  await app.load('index.html');
+});
+```
+***www***/`index.html`
+```html
+<style>body { white-space: pre; }</style>
+<script>
+fetch('node_modules/carlo/package.json')
+    .then(response => response.text())
+    .then(text => document.body.textContent = text);
+</script>
+```
 
 [App]: #class-app
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
