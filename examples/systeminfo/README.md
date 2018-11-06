@@ -9,7 +9,7 @@ npm i
 Run application
 
 ```bash
-node main.js
+npm start
 ```
 
 Optionally package as executable
