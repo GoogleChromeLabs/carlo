@@ -2,97 +2,103 @@
 
 > This is a pre-release API, so it is a subject to change. Please use it at your own risk. Once API is validated, it will be bumped to v1.0 and preserved for backwards compatibility.
 
-In this RPC system one can obtain a handle to the local object and share
-it between execution contexts. Obtaining the handle world as follows:
+### Handles
+
+In Carlo's RPC system one can obtain a `handle` to a local `object` and pass it between the execution
+contexts. Execution contexts can be Chrome, Node, child processes or any other JavaScript
+execution environment, local or remote.
+
+Calling a method on the `handle` results in calling it on the actual `object`:
 
 ```js
 class Foo {
-  hello() { console.log('hello'); }
+  hello(name) { console.log(`hello ${name}`); }
 }
-const foo = rpc.handle(new Foo());
+const foo = rpc.handle(new Foo());  // <<-- obtained handle to object.
+await foo.hello('world');  // <-- prints 'hello world'
 ```
 
-By default, `handle` has access to all the *public* methods of the object.
-Public methods are the ones not starting or ending with `_`. 
+> By default, `handle` has access to all the *public* methods of the object.
+Public methods are the ones not starting or ending with `_`.
+
+All handle operations are async, notice how synchronous `hello` method became async when accessed
+via the handle. The world where `handle` is created can access the actual `object`. When handle is no longer needed, the world that created it can dispose it:
 
 ```js
-await foo.hello();  // <-- prints hello
+const object = rpc.object(handle);
+rpc.dispose(foo);
 ```
 
-> Note how synchronous `Foo` methods become async when accessed through the
-handle.
+Handles are passed between the worlds as arguments of the calls on other handles:
 
-This handle can now be passed between the execution contexts (worlds) as an
-argument of the call on another handle.
-
+`World 1`
 ```js
+class Parent {
+  constructor() {
+    this.children = [];
+  }
+  addChild(child) {
+    this.children.push(child);
+    return this.children.length - 1;
+  }
+}
+```
+
+`World 2`
+```
 class Child {}
-function(parent) {
+
+async function(parent) {  // <-- parent is a handle to the object from World 1
   const child = rpc.handle(new Child);
-  parent.addChild(child);
+  // Call method on parent remotely, pass handle to child into it.
+  const ordinal = await parent.addChild(child);
+  console.log(`Added child #${ordinal}`);
 }
 ```
 
-If `parent` above belongs to a different world, `child` handle will be sent
-there and the user will be able to call methods on child from that different
-world. Return values of those calls will be relivered to the caller seamlessly.
+### Example
+Following is an end-to-end example of the RPC application that demonstrates the variety of remote
+operations that can be performed on handles:
 
-For handles pointing to the local objects, there is a way to fetch the element
-from the handle:
-
-```js
-const object = handle.object();
-```
-
-Following is an end-to-end example of the RPC application:
-
-`family.js` defined Parent and Child classes that are going to be working in
-multiple processes and will communicate with each other.
+`family.js`
 
 ```js
 const rpc = require('rpc');
 
 class Parent {
   constructor() {
-    this.children_ = [];
+    this.children = [];
   }
 
   addChild(child) {
-    console.log('Adding child #' + this.children_.length);
+    const ordinal = this.children_.length;
+    console.log(`Adding child #${ordinal}`);
+    child.setOrdinal(ordinal);
 
-    // Set child ordinal when it is added to parent.
-    child.setOrdinal(this.children_.length);
-
-    // Go over the children and make sure siblings are aware
-    // of each other.
-    for (const c of this.children_) {
+    // Go over the children and make siblings aware of each other.
+    for (const c of this.children) {
       c.setSibling(child);
       child.setSibling(c);
     }
-    this.children_.push(child);
+    this.children.push(child);
+    return ordinal;
   }
 }
 
 class Child {
   constructor() {
     // Obtain handle to self that is used in RPC.
-    this.self_ = rpc.handle(this);
+    this.handle_ = rpc.handle(this);
   }
 
-  setOrdinal(ordinal) {
-    this.ordinal_ = ordinal;
-    console.log(`I am now a child #${ordinal}`);
-  }
-
-  ordinal() {
-    return this.ordinal_;
-  }
+  setOrdinal(ordinal) { this.ordinal_ = ordinal; }
+  ordinal() { return this.ordinal_; }
 
   async setSibling(sibling) {
     // Say hello to another sibling when it is reported.
     const o = await sibling.ordinal();
     console.log(`I am #${this.ordinal_} and I have a sibling #${o}`);
-    await sibling.hiSibling(this.self_);
+    await sibling.hiSibling(this.handle_);
   }
 
   async hiSibling(sibling) {
@@ -101,14 +107,14 @@ class Child {
   }
 
   dispose() {
-    rpc.dispose(this.self_);
+    rpc.dispose(this.handle_);
   }
 }
 
 module.exports = { Parent, Child };
 ```
 
-`main.js` main script runs in the main process.
+`main.js` runs in the main process.
 ```js
 const rpc = require('rpc');
 const rpc_process = require('rpc_process');
@@ -140,7 +146,7 @@ rpc_process.init(parent => {
   // parent.addChild(rpc.handle(new Child)) here.
 
   // But we prefer to simply return the handle to the newly created child
-  // into the parent world.
+  // into the parent world for the sake of this demo.
   return rpc.handle(new Child());
 });
 ```
