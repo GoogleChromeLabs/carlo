@@ -22,6 +22,15 @@ const child_process = require('child_process');
 const carlo = require('carlo');
 const { rpc, rpc_process } = require('carlo/rpc');
 
+if (!process.env.CARLO) {
+  child_process.spawn(process.argv[0], [__filename], {
+     detached: true,
+     env: { CARLO: 1, ...process.env }
+  });
+  process.exit(0);
+  return;
+}
+
 class TerminalApp {
   constructor() {
     this.launch_();
