@@ -113,8 +113,8 @@ function in the context of the loaded page.
 
 `main.js`
 ```js
-const carlo = require('./index.js');
-const { rpc } = require('./rpc');
+const carlo = require('carlo');
+const { rpc } = require('carlo/rpc');
 
 carlo.launch().then(async app => {
   app.serveFolder(__dirname);
@@ -193,6 +193,7 @@ const carlo = require('carlo');
 
 carlo.launch().then(async app => {
   app.on('exit', () => process.exit());
+  app.serveFolder(__dirname);  // <-- won't be used
   app.serveOrigin('http://localhost:8080');  // <-- fetch from the local server
   await app.load('index.html');
 });
