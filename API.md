@@ -7,11 +7,11 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
-  * [App.evaluate(pageFunction, ...args)](#appevaluatepagefunction-args)
+  * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
   * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
-  * [App.load(uri, params)](#apploaduri-params)
-  * [App.serveFolder(folder, prefix)](#appservefolderfolder-prefix)
+  * [App.load(uri[, params])](#apploaduri-params)
+  * [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix)
   * [App.serveOrigin(origin)](#appserveoriginorigin)
 
 #### carlo.launch([options])
@@ -31,7 +31,7 @@ Launches the browser.
 #### event: 'exit'
 Emitted when the App window closes.
 
-#### App.evaluate(pageFunction, ...args)
+#### App.evaluate(pageFunction[, ...args])
 - `pageFunction` <[function]|[string]> Function to be evaluated in the page context
 - `...args` <...[Serializable]> Arguments to pass to `pageFunction`
 - `return`: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
@@ -102,14 +102,14 @@ md5('digest').then(result => document.body.textContent = result);
 </script>
 ```
 
-#### App.load(uri, params)
-- `uri` <[string]> Path to the resource relative to the folder passed into `serveFolder`.
-- `params` <*> Optional parameters to pass the the web application. Parameters can be
+#### App.load(uri[, params])
+- `uri` <[string]> Path to the resource relative to the folder passed into [`serveFolder()`].
+- `params` <*> Optional parameters to pass to the web application. Parameters can be
 primitive types, <[Array]>, <[Object]> or [rpc](https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md) `handles`.
-- `return`: <[Promise]> <*> result of the `load()` invocation, can be rpc handle.
+- `return`: <[Promise]&lt;*>> Result of the `load()` invocation, can be rpc handle.
 
-Navigates the Chrome web app to the given `uri`, loads the target page and calls the `load`
-function in the context of the loaded page.
+Navigates the Chrome web app to the given `uri`, loads the target page and calls the `load()`
+function, provided by this page, in its context.
 
 `main.js`
 ```js
@@ -149,7 +149,7 @@ async function load(backend) {
 <body>Open console</body>
 ```
 
-#### App.serveFolder(folder, prefix)
+#### App.serveFolder(folder[, prefix])
 - `folder` <[string]> Folder with web content to make available to Chrome.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
@@ -208,6 +208,7 @@ fetch('node_modules/carlo/package.json')
 </script>
 ```
 
+[`serveFolder()`]: #appservefolderfolder-prefix
 [App]: #class-app
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
 [Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
