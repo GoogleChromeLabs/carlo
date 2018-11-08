@@ -25,8 +25,9 @@ All handle operations are async, notice how synchronous `hello` method became as
 via the handle. The world where `handle` is created can access the actual `object`. When handle is no longer needed, the world that created it can dispose it:
 
 ```js
+const handle = rpc.handle(object);
 const object = rpc.object(handle);
-rpc.dispose(foo);
+rpc.dispose(handle);
 ```
 
 Handles are passed between the worlds as arguments of the calls on other handles:
