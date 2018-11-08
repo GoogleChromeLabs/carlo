@@ -14,8 +14,8 @@
 <!-- [START usecases] -->
 ###### What can I do?
 
-Carlo creates hybrid applications that use Web stack for rendering and Node for capabilities:
-- For Node applications, the web rendering stack visualizes the dynamic state of the app. 
+With Carlo users can create hybrid applications that use Web stack for rendering and Node for capabilities:
+- For Node applications, the web rendering stack lets users visualize the dynamic state of the app. 
 - For Web applications, additional system capabilities are accessible from Node.
 - The application can be bundled into a single executable using [pkg](https://github.com/zeit/pkg).
 
