@@ -5,8 +5,7 @@
 [![Install Size](https://packagephobia.now.sh/badge?p=carlo)](https://packagephobia.now.sh/result?p=carlo)
 <!-- [END badges] -->
 
-> Carlo provides Node applications with [Google Chrome](https://www.google.com/chrome/) rendering capabilities.
-Carlo communicates with the locally-installed browser instance using the [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project. Carlo also provides remote call infrastructure for communication between Node and the browser.
+> Carlo provides Node applications with [Google Chrome](https://www.google.com/chrome/) rendering capabilities, communicates with the locally-installed browser instance using the [Puppeteer](https://github.com/GoogleChrome/puppeteer/) project, and implements a remote call infrastructure for communication between Node and the browser.
 
 ###### [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) | [FAQ](#faq) | [Contributing](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md)
 
@@ -15,16 +14,16 @@ Carlo communicates with the locally-installed browser instance using the [Puppet
 <!-- [START usecases] -->
 ###### What can I do?
 
-With Carlo, you can create hybrid applications that use Web stack for rendering and Node for capabilities:
-- For Node applications, you can visualize dynamic state of your Node app using web rendering stack
-- For Web applications, you can expose additional system capabilities accessible from Node
-- You can bundle your application into a single executable using [pkg](https://github.com/zeit/pkg).
+With Carlo users can create hybrid applications that use Web stack for rendering and Node for capabilities:
+- For Node applications, the web rendering stack lets users visualize the dynamic state of the app. 
+- For Web applications, additional system capabilities are accessible from Node.
+- The application can be bundled into a single executable using [pkg](https://github.com/zeit/pkg).
 
 ###### How does it work?
 
-- Carlo locates Google Chrome installed locally
-- Launches it and establishes connection to Chrome over the process pipe
-- Exposes high level API for rendering in Chrome in Node environment
+- Carlo locates Google Chrome installed locally.
+- Launches Chrome and establishes a connection over the process pipe.
+- Exposes a high level API for rendering in Chrome with the Node environment.
 
 <!-- [END usecases] -->
 
@@ -94,35 +93,35 @@ Run your application:
 node example.js
 ```
 
-Check out [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) and [terminal](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/terminal) examples with richer UI and RPC-based communication between the Web and Node under the [examples](https://github.com/GoogleChromeLabs/carlo/tree/master/examples) folder.
+Check out [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) and [terminal](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/terminal) examples with richer UI and RPC-based communication between the Web and Node in the [examples](https://github.com/GoogleChromeLabs/carlo/tree/master/examples) folder.
 
 <!-- [END getstarted] -->
 
 ## API
 
-Check out [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) to get familiar with Carlo API.
+Check out the [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) to get familiar with Carlo.
 
 
 ## Contributing to Carlo
 
-Check out [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md) to get an overview of Carlo development.
+Look at the [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/master/CONTRIBUTING.md) to get an overview of Carlo's development.
 
 <!-- [START faq] -->
 
 ## FAQ
 
-#### Q: What was the motivation behind this project when we already have Electron and NW.js? How this differs from these platforms, how it helps to achieve something that's not possible/harder with these two?
+#### Q: What was the motivation behind this project when we already have Electron and NW.js? How does this project differ from these platforms, how does it achieve something that is not possible/harder with Electron or NW.js?
 
-- One of the motivations is to demonstrate how browser installed locally can be used with Node out of the box.
-- Unlike with Electron, Node v8 and Chrome v8 engines are decoupled in Carlo, providing a maintainable model with the ability of the independent updates of the underlying components. Carlo is less about branding and is more about productivity + giving the control over bundling to the user.
+- One of the motivations of this project is to demonstrate how browsers that are installed locally can be used with Node out of the box.
+- Node v8 and Chrome v8 engines are decoupled in Carlo, providing a maintainable model with the ability to independently update underlying components. Carlo gives the user control over bundling and is more about productivity than branding.
 
-#### Q: Can Node app using Carlo be packaged as a Desktop app?
+#### Q: Can a Node app using Carlo be packaged as a Desktop app?
 
-One can use the [pkg](https://github.com/zeit/pkg) project to package their Node app as a Desktop app. Carlo does not provide the branding configurability such as application icon or customizable menus, it focuses on the productivity and Web/Node interoperability instead. Check out the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) example and call `pkg package.json` in it to see how it works.
+The [pkg](https://github.com/zeit/pkg) project can be used to package a Node app as a Desktop app. Carlo does not provide branding configurability such as application icons or customizable menus, instead Carlo focuses on productivity and Web/Node interoperability. Check out the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) example and call `pkg package.json` to see how it works.
 
 #### Q: What happens if the user does not have Chrome installed?
 
-Carlo prints error message when it can't locate Chrome.
+Carlo prints an error message when Chrome can not be located.
 
 #### Q: What is the minimum Chrome version that Carlo supports?
 
