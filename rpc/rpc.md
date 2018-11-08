@@ -30,6 +30,14 @@ const object = rpc.object(handle);
 rpc.dispose(handle);
 ```
 
+Properties of the target object are similarly accessible via the handle:
+
+```js
+const foo = rpc.handle({ myvalue: 'value '});  // <<-- obtained handle to object.
+await foo.myvalue();  // <-- returns 'value'
+```
+
+
 Handles are passed between the worlds as arguments of the calls on other handles:
 
 `World 1`

@@ -91,6 +91,26 @@ describe('rpc', () => {
     const result = await foo.call({a: [foo]});
     expect(result).toBe('name');
   });
+  it('call method that does not exist', async(state, test) => {
+    class Foo {
+    }
+    const foo = rpc.handle(new Foo());
+    try {
+      await foo.sum(1, 3);
+      expect(true).toBeFalsy();
+    } catch (e) {
+      expect(e.toString()).toContain('There is no member');
+    }
+  });
+  it('call private method', async(state, test) => {
+    const foo = rpc.handle({});
+    try {
+      await foo._sum(1, 3);
+      expect(true).toBeFalsy();
+    } catch (e) {
+      expect(e.toString()).toContain('Private members are not exposed over RPC');
+    }
+  });
   it('call method exception', async(state, test) => {
     class Foo {
       sum(a, b) { return b + c; }
@@ -98,6 +118,7 @@ describe('rpc', () => {
     const foo = rpc.handle(new Foo());
     try {
       await foo.sum(1, 3);
+      expect(true).toBeFalsy();
     } catch (e) {
       expect(e.toString()).toContain('c is not defined');
     }
@@ -110,6 +131,7 @@ describe('rpc', () => {
     const foo = rpc.handle(new Foo());
     try {
       await foo.sum(1, 3);
+      expect(true).toBeFalsy();
     } catch (e) {
       expect(e.toString()).toContain('c is not defined');
     }
@@ -131,9 +153,28 @@ describe('rpc', () => {
     const calls = 0;
     try {
       await foo.call(rpc.handle(() => ++calls));
+      expect(true).toBeFalsy();
     } catch (e) {
       expect(e.toString()).toContain('Assignment to constant');
     }
+  });
+  it('access property', async(state, test) => {
+    const foo = rpc.handle({ value: 'Hello wold' });
+    expect(await foo.value()).toBe('Hello wold');
+  });
+  it('access property with params', async(state, test) => {
+    const foo = rpc.handle({ value: 'Hello wold' });
+    try {
+      expect(await foo.value(1)).toBe('Hello wold');
+      expect(true).toBeFalsy();
+    } catch (e) {
+      expect(e.toString()).toContain('is not a function');
+    }    
+  });
+  it('materialize handle', async(state, test) => {
+    const object = {};
+    const handle = rpc.handle(object);
+    expect(rpc.object(handle) === object).toBeTruthy();
   });
   it('access disposed handle', async(state, test) => {
     class Foo {
@@ -143,6 +184,7 @@ describe('rpc', () => {
     rpc.dispose(foo);
     try {
       await foo.sum(1, 2);
+      expect(true).toBeFalsy();
     } catch (e) {
       expect(e.toString()).toContain('Object has been diposed');
     }
