@@ -188,10 +188,12 @@ class Rpc {
   /**
    * Returns the object this handle points to. Only works on the local
    * handles, otherwise returns null.
+   *
+   * @param {!Handle} handle Primary object handle.
    * @return {?Object}
    */
-  object() {
-    return this.object_ || null;
+  object(handle) {
+    return handle.object_ || null;
   }
 
   /**
