@@ -4,7 +4,7 @@
   "description": "System info example",
   "main": "main.js",
   "scripts": {
-    "pack": "pkg package.json",
+    "bundle": "pkg package.json",
     "start": "node main.js"
   },
   "bin": {

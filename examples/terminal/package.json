@@ -4,7 +4,6 @@
   "description": "Terminal example",
   "main": "main.js",
   "scripts": {
-    "pack": "pkg package.json",
     "start": "node main.js"
   },
   "bin": {
