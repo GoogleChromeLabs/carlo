@@ -113,7 +113,7 @@ Look at the [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/
 #### Q: What was the motivation behind this project when we already have Electron and NW.js? How does this project differ from these platforms, how does it achieve something that is not possible/harder with Electron or NW.js?
 
 - One of the motivations of this project is to demonstrate how browsers that are installed locally can be used with Node out of the box.
-- Engines are decoupled in Carlo, providing a maintainable model with the ability to independently update underlying components. Carlo gives the user control over bundling and is more about productivity than branding.
+- Engines like Node v8 and Chrome v8 are decoupled in Carlo, providing a maintainable model with the ability to independently update underlying components. Carlo gives the user control over bundling and is more about productivity than branding.
 
 #### Q: Can a Node app using Carlo be packaged as a Desktop app?
 
