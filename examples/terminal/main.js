@@ -46,10 +46,6 @@ class TerminalApp {
   createTerminal() {
     return rpc_process.spawn('worker.js');
   }
-
-  exit() {
-    process.exit();
-  }
 }
 
 new TerminalApp();
