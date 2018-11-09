@@ -48,7 +48,7 @@ Launches the browser.
 #### event: 'exit'
 Emitted when the App window closes.
 
-#### App.createWindpw([options])
+#### App.createWindow([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
   - `width` <[number]> window width in pixels, defaults to app width.
   - `height` <[number]> window height in pixels, defaults to app height.
