@@ -17,6 +17,8 @@
   * [App.serveOrigin(origin)](#appserveoriginorigin)
   * [App.windows()](#appwindows)
 - [class: Window](#class-window)
+  * [Window.bringToFront()](#windowbringtofront)
+  * [Window.close()](#windowclose)
   * [Window.evaluate(pageFunction[, ...args])](#windowevaluatepagefunction-args)
   * [Window.exit()](#windowexit)
   * [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
@@ -88,6 +90,14 @@ Running app guarantees to have at least one open window.
 
 #### event: 'exit'
 Emitted when the App window closes.
+
+#### Window.bringToFront()
+
+Brings this window to front.
+
+#### Window.close()
+
+Closes this window.
 
 #### Window.evaluate(pageFunction[, ...args])
 - `pageFunction` <[function]|[string]> Function to be evaluated in the page context
