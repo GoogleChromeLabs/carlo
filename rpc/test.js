@@ -91,6 +91,20 @@ describe('rpc', () => {
     const result = await foo.call({a: [foo]});
     expect(result).toBe('name');
   });
+  it('call method with object with recursive link', async(state, test) => {
+    class Foo {
+      async call(val) { return await val.a[0].name(); }
+      name() { return 'name'; }
+    }
+    const foo = rpc.handle(new Foo());
+    const a = {};
+    a.a = a;
+    try {
+      await foo.call({a});
+    } catch (e) {
+      expect(e.message).toBe('Object reference chain is too long');
+    }
+  });
   it('call method that does not exist', async(state, test) => {
     class Foo {
     }
