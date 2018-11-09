@@ -14,8 +14,8 @@ Calling a method on the `handle` results in calling it on the actual `object`:
 class Foo {
   hello(name) { console.log(`hello ${name}`); }
 }
-const foo = rpc.handle(new Foo());  // <<-- obtained handle to object.
-await foo.hello('world');  // <-- prints 'hello world'
+const foo = rpc.handle(new Foo());  // <-- Obtained handle to object.
+await foo.hello('world');  // <-- Prints 'hello world'.
 ```
 
 > By default, `handle` has access to all the *public* methods of the object.
@@ -33,10 +33,9 @@ rpc.dispose(handle);
 Properties of the target object are similarly accessible via the handle:
 
 ```js
-const foo = rpc.handle({ myvalue: 'value '});  // <<-- obtained handle to object.
-await foo.myvalue();  // <-- returns 'value'
+const foo = rpc.handle({ myValue: 'value' });  // <-- Obtained handle to object.
+await foo.myValue();  // <-- Returns 'value'.
 ```
-
 
 Handles are passed between the worlds as arguments of the calls on other handles:
 
@@ -54,10 +53,10 @@ class Parent {
 ```
 
 `World 2`
-```
+```js
 class Child {}
 
-async function(parent) {  // <-- parent is a handle to the object from World 1
+async function main(parent) {  // parent is a handle to the object from World 1.
   const child = rpc.handle(new Child);
   // Call method on parent remotely, pass handle to child into it.
   const ordinal = await parent.addChild(child);
@@ -80,7 +79,7 @@ class Parent {
   }
 
   addChild(child) {
-    const ordinal = this.children_.length;
+    const ordinal = this.children.length;
     console.log(`Adding child #${ordinal}`);
     child.setOrdinal(ordinal);
 
@@ -144,7 +143,7 @@ const { Parent } = require('./family');
 })();
 ```
 
-`worker.js` worker script runs in a child process.
+`worker.js` runs in a child process.
 ```js
 const rpc = require('rpc');
 const rpc_process = require('rpc_process');
