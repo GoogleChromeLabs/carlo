@@ -13,17 +13,16 @@
 
 <!-- [START usecases] -->
 ###### What can I do?
+Carlo enables users to create hybrid applications by combining the functionalities of both Node and the browser.
+The web rendering stack allows users to visualize the dynamic state of Node apps while Node provides
+additional system capabilities to Web apps. The application can be bundled into a single executable
+using [pkg](https://github.com/zeit/pkg).
 
-With Carlo users can create hybrid applications that use Web stack for rendering and Node for capabilities:
-- For Node applications, the web rendering stack lets users visualize the dynamic state of the app. 
-- For Web applications, additional system capabilities are accessible from Node.
-- The application can be bundled into a single executable using [pkg](https://github.com/zeit/pkg).
 
 ###### How does it work?
-
-- Carlo locates Google Chrome installed locally.
-- Launches Chrome and establishes a connection over the process pipe.
-- Exposes a high level API for rendering in Chrome with the Node environment.
+Carlo locates and launches the locally installed Google Chrome and establishes a connection
+over the process pipe. The framework will provide a high-level API that allows rendering in Chrome
+with the Node environment.
 
 <!-- [END usecases] -->
 
