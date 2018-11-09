@@ -21,7 +21,6 @@
   * [Window.bounds()](#windowbounds)
   * [Window.close()](#windowclose)
   * [Window.evaluate(pageFunction[, ...args])](#windowevaluatepagefunction-args)
-  * [Window.exit()](#windowexit)
   * [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
   * [Window.fullscreen()](#windowfullscreen)
   * [Window.load(uri[, params])](#windowloaduri-params)
