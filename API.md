@@ -7,12 +7,22 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
+  * [App.createWindow()](#appcreatewindow)
   * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
   * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
   * [App.load(uri[, params])](#apploaduri-params)
+  * [App.mainWindow()](#appmainwindow)
   * [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix)
   * [App.serveOrigin(origin)](#appserveoriginorigin)
+  * [App.windows()](#appwindows)
+- [class: Window](#class-window)
+  * [Window.evaluate(pageFunction[, ...args])](#windowevaluatepagefunction-args)
+  * [Window.exit()](#windowexit)
+  * [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
+  * [Window.load(uri[, params])](#windowloaduri-params)
+  * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
+  * [Window.serveOrigin(origin)](#windowserveoriginorigin)
 
 #### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
@@ -31,7 +41,55 @@ Launches the browser.
 #### event: 'exit'
 Emitted when the App window closes.
 
+#### App.createWindpw([options])
+- `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
+  - `width` <[number]> window width in pixels, defaults to app width.
+  - `height` <[number]> window height in pixels, defaults to app height.
+  - `bgcolor` <[string]> background color using hex notation, defaults to app bgcolor.
+- `return`: <[Promise]<[Window]>> Promise which resolves to the window instance.
+
 #### App.evaluate(pageFunction[, ...args])
+
+Shortcut to the main window's [Window.evaluate(pageFunction[, ...args])](#windowevaluatepagefunction-args).
+
+#### App.exit()
+- `return`: <[Promise]>
+
+Closes the browser window.
+
+#### App.exposeFunction(name, carloFunction)
+
+Shortcut to the main window's [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
+
+#### App.load(uri[, params])
+
+Shortcut to the main window's [Window.load(uri[, params])](#windowloaduri-params).
+
+#### App.mainWindow()
+- `return`: <[Window]> Returns main window.
+
+Running app guarantees to have main window. If current main window closes, a next open window
+becomes the main one.
+
+#### App.serveFolder(folder[, prefix])
+
+Shortcut to the main window's [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
+
+#### App.serveOrigin(origin)
+
+Shortcut to the main window's [Window.serveOrigin(origin)](#windowserveoriginorigin)
+
+#### App.windows()
+- `return`: <[Array][Window]>> Returns all currently opened windows.
+
+Running app guarantees to have at least one open window.
+
+### class: Window
+
+#### event: 'exit'
+Emitted when the App window closes.
+
+#### Window.evaluate(pageFunction[, ...args])
 - `pageFunction` <[function]|[string]> Function to be evaluated in the page context
 - `...args` <...[Serializable]> Arguments to pass to `pageFunction`
 - `return`: <[Promise]<[Serializable]>> Promise which resolves to the return value of `pageFunction`
@@ -61,12 +119,7 @@ const x = 10;
 console.log(await app.evaluate(`1 + ${x}`));  // prints "11"
 ```
 
-#### App.exit()
-- `return`: <[Promise]>
-
-Closes the browser window.
-
-#### App.exposeFunction(name, carloFunction)
+#### Window.exposeFunction(name, carloFunction)
 - `name` <[string]> Name of the function on the window object
 - `carloFunction` <[function]> Callback function which will be called in Carlo's context.
 - `return`: <[Promise]>
@@ -102,7 +155,7 @@ md5('digest').then(result => document.body.textContent = result);
 </script>
 ```
 
-#### App.load(uri[, params])
+#### Window.load(uri[, params])
 - `uri` <[string]> Path to the resource relative to the folder passed into [`serveFolder()`].
 - `params` <*> Optional parameters to pass to the web application. Parameters can be
 primitive types, <[Array]>, <[Object]> or [rpc](https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md) `handles`.
@@ -149,7 +202,7 @@ async function load(backend) {
 <body>Open console</body>
 ```
 
-#### App.serveFolder(folder[, prefix])
+#### Window.serveFolder(folder[, prefix])
 - `folder` <[string]> Folder with web content to make available to Chrome.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
@@ -178,7 +231,7 @@ fetch('node_modules/carlo/package.json')
 </script>
 ```
 
-#### App.serveOrigin(origin)
+#### Window.serveOrigin(origin)
 - `origin` <[origin]> Origin to serve web content from.
 
 Fetches Carlo content from the specified origin instead of reading it from the
@@ -210,6 +263,7 @@ fetch('node_modules/carlo/package.json')
 
 [`serveFolder()`]: #appservefolderfolder-prefix
 [App]: #class-app
+[Window]: #class-window
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
 [Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
