@@ -46,6 +46,16 @@ async function load(terminalApp) {
   // Init.
   termUI.fit();
   termUI.focus();
+  document.addEventListener('keydown', event => {
+    if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) {// Ctrl+N
+      terminalApp.newWindow();
+      event.preventDefault();
+    }
+    if (event.keyCode === 81 && (event.metaKey || event.ctrlKey)) {// Ctrl+Q
+      terminalApp.exit();
+      event.preventDefault();
+    }
+  });
 }
 </script> 
 

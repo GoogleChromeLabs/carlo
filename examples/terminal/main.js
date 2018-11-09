@@ -28,15 +28,27 @@ class TerminalApp {
   }
 
   async launch_() {
-    const app = await carlo.launch({ bgcolor: '#2b2e3b' });
-    app.on('exit', () => process.exit());
-    app.serveFolder(__dirname + '/www');
-    app.serveFolder(__dirname + '/node_modules', 'node_modules');
-    await app.load('index.html', rpc.handle(this));
+    this.app_ = await carlo.launch({ bgcolor: '#2b2e3b', width: 800, height: 800 });
+    this.app_.on('exit', () => process.exit());
+    this.initUI_(this.app_.mainWindow());
+  }
+
+  async newWindow() {
+    this.initUI_(await this.app_.createWindow());
+  }
+
+  initUI_(win) {
+    win.serveFolder(__dirname + '/www');
+    win.serveFolder(__dirname + '/node_modules', 'node_modules');
+    return win.load('index.html', rpc.handle(this));
   }
 
   createTerminal() {
     return rpc_process.spawn('worker.js');
+  }
+
+  exit() {
+    process.exit();
   }
 }
 
