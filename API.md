@@ -7,7 +7,7 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
-  * [App.createWindow()](#appcreatewindow)
+  * [App.createWindow(options)](#appcreatewindowoptions)
   * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
   * [App.exposeFunction(name, carloFunction)](#appexposefunctionname-carlofunction)
@@ -34,6 +34,8 @@
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
   - `width` <[number]> app window width in pixels.
   - `height` <[number]> app window height in pixels.
+  - `top`: <[number]> app window top offset in pixels.
+  - `left` <[number]> app window left offset in pixels.
   - `bgcolor` <[string]> background color using hex notation, defaults to `#ffffff`.
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `.profile`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
@@ -51,6 +53,8 @@ Emitted when the App window closes.
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
   - `width` <[number]> window width in pixels, defaults to app width.
   - `height` <[number]> window height in pixels, defaults to app height.
+  - `top` <[number]> window top in pixels, defaults to app width.
+  - `left` <[number]> window left in pixels, defaults to app height.
   - `bgcolor` <[string]> background color using hex notation, defaults to app bgcolor.
 - `return`: <[Promise]<[Window]>> Promise which resolves to the window instance.
 

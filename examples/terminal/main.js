@@ -25,22 +25,34 @@ const { rpc, rpc_process } = require('carlo/rpc');
 class TerminalApp {
   constructor() {
     this.launch_();
+    this.lastTop_ = 50;
+    this.lastLeft_ = 50;
+    this.handle_ = rpc.handle(this);
   }
 
   async launch_() {
-    this.app_ = await carlo.launch({ bgcolor: '#2b2e3b', width: 800, height: 800 });
+    this.app_ = await carlo.launch({
+      bgcolor: '#2b2e3b',
+      width: 800,
+      height: 800,
+      top: this.lastTop_,
+      left: this.lastLeft_ });
     this.app_.on('exit', () => process.exit());
     this.initUI_(this.app_.mainWindow());
   }
 
   async newWindow() {
-    this.initUI_(await this.app_.createWindow());
+    this.lastTop_ = (this.lastTop_ + 50) % 200;
+    this.lastLeft_ += 50;
+    const options = { top: this.lastTop_, left: this.lastLeft_ };
+    this.initUI_(await this.app_.createWindow(options));
   }
 
-  initUI_(win) {
+  async initUI_(win) {
     win.serveFolder(__dirname + '/www');
     win.serveFolder(__dirname + '/node_modules', 'node_modules');
-    return win.load('index.html', rpc.handle(this));
+    const term = await rpc_process.spawn('worker.js');
+    return win.load('index.html', { app: this.handle_, term });
   }
 
   createTerminal() {

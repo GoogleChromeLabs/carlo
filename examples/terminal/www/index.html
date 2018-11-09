@@ -29,10 +29,7 @@ body, #terminal {
 <script>
 Terminal.applyAddon(fit);
 
-async function load(terminalApp) {
-  // Create backend control.
-  const term = await terminalApp.createTerminal();
-
+async function load({app, term}) {
   // Create ui control.
   const termUI = new Terminal({cursorBlink: true});
   termUI.open(document.getElementById('terminal'));
@@ -48,7 +45,7 @@ async function load(terminalApp) {
   termUI.focus();
   document.addEventListener('keydown', event => {
     if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) {  // Ctrl+N
-      terminalApp.newWindow();
+      app.newWindow();
       event.preventDefault();
     }
   });
