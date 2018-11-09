@@ -18,13 +18,18 @@
   * [App.windows()](#appwindows)
 - [class: Window](#class-window)
   * [Window.bringToFront()](#windowbringtofront)
+  * [Window.bounds()](#windowbounds)
   * [Window.close()](#windowclose)
   * [Window.evaluate(pageFunction[, ...args])](#windowevaluatepagefunction-args)
   * [Window.exit()](#windowexit)
   * [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
+  * [Window.fullscreen()](#windowfullscreen)
   * [Window.load(uri[, params])](#windowloaduri-params)
+  * [Window.maximize()](#windowmaximize)
+  * [Window.minimize()](#windowminimize)
   * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
   * [Window.serveOrigin(origin)](#windowserveoriginorigin)
+  * [Window.setBounds()](#windowsetbounds)
 
 #### carlo.launch([options])
 - `options` <[Object]>  Set of configurable options to set on the app. Can have the following fields:
@@ -94,6 +99,15 @@ Emitted when the App window closes.
 #### Window.bringToFront()
 
 Brings this window to front.
+
+#### Window.bounds()
+- `return`
+  - `top` <[number]> top offset in pixels
+  - `left` <[number]> left offset in pixels
+  - `width` <[number]> width in pixels
+  - `height` <[number]> height in pixels
+
+Returns window bounds.
 
 #### Window.close()
 
@@ -165,6 +179,10 @@ md5('digest').then(result => document.body.textContent = result);
 </script>
 ```
 
+#### Window.fullscreen()
+
+Turns the window into the full screen mode. Behavior is platform-specific.
+
 #### Window.load(uri[, params])
 - `uri` <[string]> Path to the resource relative to the folder passed into [`serveFolder()`].
 - `params` <*> Optional parameters to pass to the web application. Parameters can be
@@ -211,6 +229,14 @@ async function load(backend) {
 </script>
 <body>Open console</body>
 ```
+
+#### Window.maximize()
+
+Maximizes the window. Behavior is platform-specific.
+
+#### Window.minimize()
+
+Minimizes the window. Behavior is platform-specific.
 
 #### Window.serveFolder(folder[, prefix])
 - `folder` <[string]> Folder with web content to make available to Chrome.
@@ -270,6 +296,16 @@ fetch('node_modules/carlo/package.json')
     .then(text => document.body.textContent = text);
 </script>
 ```
+
+#### Window.setBounds(bounds)
+- `bounds` Window bounds
+  - `top`: <[number]> top offset in pixels
+  - `left` <[number]> left offset in pixels
+  - `width` <[number]> width in pixels
+  - `height` <[number]> height in pixels
+
+Sets window bounds. Parameters `top`, `left`, `width` and `hight` are all optional. Dimension or
+the offset is only applied when specified.
 
 [`serveFolder()`]: #appservefolderfolder-prefix
 [App]: #class-app
