@@ -11,7 +11,7 @@
   },
   "scripts": {
     "lint": "([ \"$CI\" = true ] && eslint --quiet -f codeframe . || eslint .)",
-    "test": "node rpc/test.js"
+    "test": "node rpc/test.js lib/test.js"
   },
   "keywords": [],
   "author": "The Chromium Authors",

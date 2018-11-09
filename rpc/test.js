@@ -169,7 +169,7 @@ describe('rpc', () => {
       expect(true).toBeFalsy();
     } catch (e) {
       expect(e.toString()).toContain('is not a function');
-    }    
+    }
   });
   it('materialize handle', async(state, test) => {
     const object = {};
