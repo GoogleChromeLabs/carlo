@@ -232,9 +232,14 @@ class Rpc {
   /**
    * Wraps call argument as a protocol structures.
    * @param {*} param
+   * @param {number=} maxDepth
    * @return {*}
    */
-  wrap_(param) {
+  wrap_(param, maxDepth) {
+    maxDepth = typeof maxDepth === 'undefined' ? 1000 : maxDepth;
+    if (!maxDepth)
+      throw new Error('Object reference chain is too long');
+    maxDepth--;
     if (!param)
       return param;
 
@@ -244,12 +249,12 @@ class Rpc {
     }
 
     if (param instanceof Array)
-      return param.map(item => this.wrap_(item));
+      return param.map(item => this.wrap_(item, maxDepth));
 
     if (typeof param === 'object') {
       const result = {};
       for (const key in param)
-        result[key] = this.wrap_(param[key]);
+        result[key] = this.wrap_(param[key], maxDepth);
       return result;
     }
 
