@@ -45,7 +45,10 @@ class Handle {
 
     const target = {};
     target[handleSymbol] = this;
-    this.proxy_ = new Proxy(target, { get: Handle.proxyHandler_ });
+    this.proxy_ = new Proxy(target, {
+      get: Handle.proxyHandler_,
+      has: () => true
+    });
   }
 
   /**
