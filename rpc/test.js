@@ -210,6 +210,15 @@ describe('rpc', () => {
     await foo.foo(foo);
     expect(foo === foo2).toBeTruthy();
   });
+  it('handle to handle should throw', async(state, test) => {
+    const handle = rpc.handle({});
+    try {
+      rpc.handle(handle);
+      expect(true).toBeFalsy();
+    } catch (e) {
+      expect(e.toString()).toContain('Can not return handle to handle');
+    }
+  });
   it('parent / child communication', async(state, test) => {
     const messages = [];
     class Root {

@@ -187,7 +187,7 @@ class Rpc {
   handle(object) {
     if (!object)
       throw new Error('Can only create handles for objects');
-    if (object instanceof Handle)
+    if (typeof object === 'object' && handleSymbol in object)
       throw new Error('Can not return handle to handle.');
     const descriptor = this.describe_(object);
     const address = [this.worldId_, descriptor.name + '#' + (++this.lastHandleId_)];
