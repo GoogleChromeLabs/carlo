@@ -8,6 +8,8 @@ In Carlo's RPC system one can obtain a `handle` to a local `object` and pass it 
 contexts. Execution contexts can be Chrome, Node, child processes or any other JavaScript
 execution environment, local or remote.
 
+![rpc](https://user-images.githubusercontent.com/883973/48327354-0d6f1f00-e5f3-11e8-99dc-fef5f4ad53dc.png)
+
 Calling a method on the `handle` results in calling it on the actual `object`:
 
 ```js
