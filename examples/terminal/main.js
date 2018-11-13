@@ -24,9 +24,9 @@ const { rpc, rpc_process } = require('carlo/rpc');
 
 class TerminalApp {
   constructor() {
-    this.launch_();
     this.lastTop_ = 50;
     this.lastLeft_ = 50;
+    this.launch_();
     this.handle_ = rpc.handle(this);
   }
 
