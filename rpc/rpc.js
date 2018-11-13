@@ -56,6 +56,8 @@ class Handle {
     const handle = target[handleSymbol];
     if (methodName === handleSymbol)
       return handle;
+    if (typeof methodName !== 'string')
+      return;
     if (methodName === 'then')
       return target[methodName];
     return handle.callMethod_.bind(handle, methodName);
@@ -74,10 +76,8 @@ class Handle {
       m: method,
       p: this.rpc_.wrap_(args)
     };
-    const response = await this.rpc_.sendMessage_({ to: this.address_, from: this.localAddress_, message });
-    if (response.error)
-      throw new Error(response.error);
-    return this.rpc_.unwrap_(response.r);
+    const response = await this.rpc_.sendCommand_(this.address_, this.localAddress_, message);
+    return this.rpc_.unwrap_(response);
   }
 
   /**
@@ -90,7 +90,6 @@ class Handle {
       const result = await this.object_(...this.rpc_.unwrap_(message.p));
       return this.rpc_.wrap_(result);
     }
-
     if (message.m.startsWith('_') || message.m.endsWith('_'))
       throw new Error(`Private members are not exposed over RPC: '${message.m}'`);
 
@@ -155,15 +154,27 @@ class Rpc {
    *        - returns function that should be used to send messages to the
    *          world
    * @param {*} params Params to pass to the child world.
-   * @return {!Promise<*>} returns the handles / parameters that child
+   * @return {!Promise<{worldId:string, *}>} returns the handles / parameters that child
    *         world returned during the initialization.
    */
   createWorld(transport, params) {
     const worldId = this.worldId_ + '/' + (++this.lastWorldId_);
-    const sendToChild = transport(this.routeMessage_.bind(this));
+    const sendToChild = transport(this.routeMessage_.bind(this, false));
     this.worlds_.set(worldId, sendToChild);
     sendToChild({cookie: true, params: this.wrap_(params), worldId });
     return new Promise(f => this.cookieResponseCallbacks_.set(worldId, f));
+  }
+
+  /**
+   * Called in the parent world.
+   * Disposes a child world with the given id.
+   *
+   * @param {string} worldId The world to dispose.
+   */
+  disposeWorld(worldId) {
+    if (!this.worlds_.has(worldId))
+      throw new Error('No world with given id exists');
+    this.worlds_.delete(worldId);
   }
 
   /**
@@ -172,7 +183,7 @@ class Rpc {
    * @param {function(*):!Promise<*>} initializer
    */
   initWorld(transport, initializer) {
-    this.sendToParent_ = transport(this.routeMessage_.bind(this));
+    this.sendToParent_ = transport(this.routeMessage_.bind(this, true));
     return new Promise(f => this.cookieCallback_ = f)
         .then(initializer ? initializer : () => {})
         .then(response => this.sendToParent_(
@@ -314,15 +325,13 @@ class Rpc {
    * @param {!Object} payload
    * @return {!Promise<!Object>}
    */
-  sendMessage_(payload) {
+  sendCommand_(to, from, message) {
+    const payload = { to, from, message, id: ++this.lastMessageId_ };
     if (this.debug_)
       console.log('\nSEND', payload);
-    let result;
-    if (payload.from) {
-      payload.id = ++this.lastMessageId_;
-      result = new Promise(fulfil => this.callbacks_.set(payload.id, fulfil));
-    }
-    this.routeMessage_(payload);
+    const result = new Promise((fulfill, reject) =>
+      this.callbacks_.set(payload.id, {fulfill, reject}));
+    this.routeMessage_(false, payload);
     return result;
   }
 
@@ -331,7 +340,7 @@ class Rpc {
    *
    * @param {!Object} payload
    */
-  routeMessage_(payload) {
+  routeMessage_(fromParent, payload) {
     if (this.debug_)
       console.log(`\nROUTE[${this.worldId_}]`, payload);
 
@@ -346,7 +355,14 @@ class Rpc {
     if (payload.cookieResponse) {
       const callback = this.cookieResponseCallbacks_.get(payload.worldId);
       this.cookieResponseCallbacks_.delete(payload.worldId);
-      callback(this.unwrap_(payload.r));
+      callback({ result: this.unwrap_(payload.r), worldId: payload.worldId });
+      return;
+    }
+
+    if (!fromParent && !this.isActiveWorld_(payload.from[0])) {
+      // Dispatching from the disposed world.
+      if (this.debug_)
+        console.log(`DROP ON THE FLOOR`);
       return;
     }
 
@@ -366,9 +382,30 @@ class Rpc {
       }
     }
 
+    if (payload.to[0].startsWith(this.worldId_)) {
+      // Sending to the disposed world.
+      if (this.debug_)
+        console.log(`DROP ON THE FLOOR`);
+      return;
+    }
+
     if (this.debug_)
       console.log(`ROUTED TO PARENT`);
     this.sendToParent_(payload);
+  }
+
+  /**
+   * @param {!Address} address
+   * @return {boolean}
+   */
+  isActiveWorld_(worldId) {
+    if (this.worldId_ === worldId)
+      return true;
+    for (const wid of this.worlds_.keys()) {
+      if (worldId.startsWith(wid))
+        return true;
+    }
+    return false;
   }
 
   /**
@@ -380,26 +417,28 @@ class Rpc {
     if (this.debug_)
       console.log('\nDISPATCH', payload);
     // Dispatch the response.
-    if (typeof payload.id === 'number' && !payload.from) {
-      this.callbacks_.get(payload.id)(payload.message);
-      this.callbacks_.delete(payload.id);
+    if (typeof payload.rid === 'number') {
+      const {fulfill, reject} = this.callbacks_.get(payload.rid);
+      this.callbacks_.delete(payload.rid);
+      if (payload.e)
+        reject(new Error(payload.e));
+      else
+        fulfill(payload.r);
       return;
     }
 
-    let message;
+    const message = { from: payload.to, rid: payload.id, to: payload.from };
     const handle = this.idToHandle_.get(payload.to[1]);
     if (!handle) {
-      message = { error: 'Object has been diposed.' };
+      message.e = 'Object has been diposed.';
     } else {
       try {
-        message = { r: await handle.dispatchMessage_(payload.message) };
+        message.r = await handle.dispatchMessage_(payload.message);
       } catch (e) {
-        message = { error: e.toString() + '\n' + e.stack };
+        message.e = e.toString() + '\n' + e.stack;
       }
     }
-    message.id = payload.id;
-    const response = { id: message.id, to: payload.from, message };
-    this.sendMessage_(response);
+    this.routeMessage_(false, message);
   }
 }
 

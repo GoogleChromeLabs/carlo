@@ -54,10 +54,6 @@ class TerminalApp {
     const term = await rpc_process.spawn('worker.js');
     return win.load('index.html', { app: this.handle_, term });
   }
-
-  createTerminal() {
-    return rpc_process.spawn('worker.js');
-  }
 }
 
 new TerminalApp();
