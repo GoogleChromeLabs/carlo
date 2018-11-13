@@ -16,32 +16,4 @@
 
 'use strict';
 
-const carlo = require('carlo');
-const os = require('os');
-const path = require('path');
-const si = require('systeminformation');
-
-(async () => {
-  const app = await carlo.launch(
-      {
-        bgcolor: '#2b2e3b',
-        width: 1000,
-        height: 500,
-        userDataDir: path.join(os.homedir(), '.carlosysinfo'),
-        args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : []
-      });
-  app.on('exit', () => process.exit());
-  app.serveFolder(__dirname + '/www');
-  await app.exposeFunction('systeminfo', systeminfo);
-  await app.load('index.html');
-})();
-
-async function systeminfo() {
-  const info = {};
-  await Promise.all([
-    si.battery().then(r => info.battery = r),
-    si.cpu().then(r => info.cpu = r),
-    si.osInfo().then(r => info.osInfo = r),
-  ]);
-  return info;
-}
+require('./app.js').run();

@@ -5,8 +5,10 @@
 ##### Table of Contents
 
 - [carlo.launch([options])](#carlolaunchoptions)
+- [carlo.enterTestMode()](#carloentertestmode)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
+  * [App.browserForTest()](#appbrowserfortest)
   * [App.createWindow(options)](#appcreatewindowoptions)
   * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
   * [App.exit()](#appexit)
@@ -26,9 +28,10 @@
   * [Window.load(uri[, ...params])](#windowloaduri-params)
   * [Window.maximize()](#windowmaximize)
   * [Window.minimize()](#windowminimize)
+  * [Window.pageForTest()](#windowpagefortest)
   * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
   * [Window.serveOrigin(origin)](#windowserveoriginorigin)
-  * [Window.setBounds()](#windowsetboundsbounds)
+  * [Window.setBounds(bounds)](#windowsetboundsbounds)
 
 #### carlo.launch([options])
 - `options` <[Object]> Set of configurable options to set on the app. Can have the following fields:
@@ -44,10 +47,19 @@
 
 Launches the browser.
 
+#### carlo.enterTestMode()
+
+Enters headless test mode. In the test mode, Puppeteer browser and pages are available via 
+[App.browserForTest()](#appbrowserfortest) and [Window.pageForTest()](#windowpagefortest) respectively.
+Please refer to the Puppeteer [documentation](https://pptr.dev) for details on headless testing.
+
 ### class: App
 
 #### event: 'exit'
 Emitted when the App window closes.
+
+#### App.browserForTest()
+- `return`: <[Browser]> Puppeteer browser object for testing.
 
 #### App.createWindow([options])
 - `options` <[Object]> Set of configurable options to set on the app. Can have the following fields:
@@ -244,6 +256,9 @@ Maximizes the window. Behavior is platform-specific.
 
 Minimizes the window. Behavior is platform-specific.
 
+#### Window.pageForTest()
+- `return`: <[Page]> Puppeteer page object for testing.
+
 #### Window.serveFolder(folder[, prefix])
 - `folder` <[string]> Folder with web content to make available to Chrome.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
@@ -307,8 +322,10 @@ the offset is only applied when specified.
 [`serveFolder()`]: #windowservefolderfolder-prefix
 [App]: #class-app
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+[Browser]: https://pptr.dev/#?show=api-class-browser "Browser"
 [Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
+[Page]: https://pptr.dev/#?show=api-class-page "Page"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [Serializable]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
 [Window]: #class-window

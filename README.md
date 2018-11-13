@@ -36,11 +36,7 @@ Install Carlo
 #### npm
 ```bash
 npm i carlo
-```
-#### yarn
-
-```bash
-yarn add carlo
+# yarn add carlo
 ```
 
 > Carlo requires at least Node v7.6.0.
@@ -101,6 +97,11 @@ Check out [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/exa
 
 Check out the [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) to get familiar with Carlo.
 
+
+## Testing
+
+Carlo uses [Puppeteer](https://pptr.dev/) project for testing. Carlo application and all Carlo windows have
+corresponding Puppeteer objects exposed for testing. Please refer to the [API](https://github.com/GoogleChromeLabs/carlo/blob/master/API.md) and the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) project for more details.
 
 ## Contributing to Carlo
 

@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "bundle": "pkg package.json",
-    "start": "node main.js"
+    "start": "node main.js",
+    "test": "node test/test.js"
   },
   "bin": {
     "systeminfo-app": "./main.js"
@@ -22,6 +23,7 @@
     "systeminformation": "^3.45.9"
   },
   "devDependencies": {
-    "pkg": "^4.3.4"
+    "pkg": "^4.3.4",
+    "@pptr/testrunner": "^0.5.0"
   }
 }
