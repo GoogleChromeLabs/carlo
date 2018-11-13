@@ -6,7 +6,7 @@
   "scripts": {
     "bundle": "pkg package.json",
     "start": "node main.js",
-    "test": "node test/test.js"
+    "test": "node test.js"
   },
   "bin": {
     "systeminfo-app": "./main.js"
