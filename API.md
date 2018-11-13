@@ -4,8 +4,8 @@
 
 ##### Table of Contents
 
-- [carlo.launch([options])](#carlolaunchoptions)
 - [carlo.enterTestMode()](#carloentertestmode)
+- [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
   * [App.browserForTest()](#appbrowserfortest)
@@ -33,6 +33,12 @@
   * [Window.serveOrigin(origin)](#windowserveoriginorigin)
   * [Window.setBounds(bounds)](#windowsetboundsbounds)
 
+#### carlo.enterTestMode()
+
+Enters headless test mode. In the test mode, Puppeteer browser and pages are available via 
+[App.browserForTest()](#appbrowserfortest) and [Window.pageForTest()](#windowpagefortest) respectively.
+Please refer to the Puppeteer [documentation](https://pptr.dev) for details on headless testing.
+
 #### carlo.launch([options])
 - `options` <[Object]> Set of configurable options to set on the app. Can have the following fields:
   - `width` <[number]> App window width in pixels.
@@ -46,12 +52,6 @@
 - `return`: <[Promise]<[App]>> Promise which resolves to the app instance.
 
 Launches the browser.
-
-#### carlo.enterTestMode()
-
-Enters headless test mode. In the test mode, Puppeteer browser and pages are available via 
-[App.browserForTest()](#appbrowserfortest) and [Window.pageForTest()](#windowpagefortest) respectively.
-Please refer to the Puppeteer [documentation](https://pptr.dev) for details on headless testing.
 
 ### class: App
 
