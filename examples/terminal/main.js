@@ -33,6 +33,7 @@ class TerminalApp {
   async launch_() {
     this.app_ = await carlo.launch({
       bgcolor: '#2b2e3b',
+      title: 'Terminal App',
       width: 800,
       height: 800,
       top: this.lastTop_,

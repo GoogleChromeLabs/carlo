@@ -25,6 +25,7 @@ async function run() {
   const app = await carlo.launch(
       {
         bgcolor: '#2b2e3b',
+        title: 'Systeminfo App',
         width: 1000,
         height: 500,
         userDataDir: path.join(os.homedir(), '.carlosysinfo'),

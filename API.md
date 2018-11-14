@@ -46,6 +46,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
   - `top`: <[number]> App window top offset in pixels.
   - `left` <[number]> App window left offset in pixels.
   - `bgcolor` <[string]> Background color using hex notation, defaults to `'#ffffff'`.
+  - `title` <[string]> Application title.
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `'.profile'`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
   - `args` <[Array]<[string]>> Additional arguments to pass to the browser instance. The list of Chromium flags can be found [here](https://peter.sh/experiments/chromium-command-line-switches/).
