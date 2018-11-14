@@ -17,6 +17,7 @@
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "dependencies": {
+    "progress": "^2.0.1",
     "puppeteer-core": "^1.9.0"
   },
   "devDependencies": {
