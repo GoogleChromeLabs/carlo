@@ -20,6 +20,7 @@
 
 const child_process = require('child_process');
 const carlo = require('carlo');
+const path = require('path');
 const { rpc, rpc_process } = require('carlo/rpc');
 
 class TerminalApp {
@@ -39,6 +40,8 @@ class TerminalApp {
       top: this.lastTop_,
       left: this.lastLeft_ });
     this.app_.on('exit', () => process.exit());
+    this.app_.serveFolder(path.join(__dirname, 'www'));
+    this.app_.serveFolder(path.join(__dirname, 'node_modules'), 'node_modules');
     this.initUI_(this.app_.mainWindow());
   }
 
@@ -50,8 +53,6 @@ class TerminalApp {
   }
 
   async initUI_(win) {
-    win.serveFolder(__dirname + '/www');
-    win.serveFolder(__dirname + '/node_modules', 'node_modules');
     const term = await rpc_process.spawn('worker.js');
     return win.load('index.html', { app: this.handle_, term });
   }

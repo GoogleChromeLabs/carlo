@@ -32,7 +32,7 @@ async function run() {
         args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : []
       });
   app.on('exit', () => process.exit());
-  app.serveFolder(__dirname + '/www');
+  app.serveFolder(path.join(__dirname, 'www'));
   await app.exposeFunction('systeminfo', systeminfo);
   await app.load('index.html');
   return app;

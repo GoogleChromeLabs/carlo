@@ -16,7 +16,7 @@
   * [App.load(uri[, ...params])](#apploaduri-params)
   * [App.mainWindow()](#appmainwindow)
   * [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix)
-  * [App.serveOrigin(origin)](#appserveoriginorigin)
+  * [App.serveOrigin(base[, prefix])](#appserveoriginbase-prefix)
   * [App.windows()](#appwindows)
 - [class: Window](#class-window)
   * [Window.bounds()](#windowbounds)
@@ -30,7 +30,7 @@
   * [Window.minimize()](#windowminimize)
   * [Window.pageForTest()](#windowpagefortest)
   * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
-  * [Window.serveOrigin(origin)](#windowserveoriginorigin)
+  * [Window.serveOrigin(base, [prefix])](#windowserveoriginbase-prefix)
   * [Window.setBounds(bounds)](#windowsetboundsbounds)
 
 #### carlo.enterTestMode()
@@ -97,12 +97,52 @@ Running app guarantees to have main window. If current main window closes, a nex
 becomes the main one.
 
 #### App.serveFolder(folder[, prefix])
+- `folder` <[string]> Folder with web content to make available to Chrome.
+- `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
-Shortcut to the main window's [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
+Makes the content of the given folder available to the Chrome web app.
+
+An example of adding a local `www` folder along with the `node_modules`:
+
+`main.js`
+```js
+const carlo = require('carlo');
+
+carlo.launch().then(async app => {
+  app.on('exit', () => process.exit());
+  app.serveFolder(`${__dirname}/www`);
+  app.serveFolder(`${__dirname}/node_modules`, 'node_modules');
+  await app.load('index.html');
+});
+```
+***www***/`index.html`
+```html
+<style>body { white-space: pre; }</style>
+<script>
+fetch('node_modules/carlo/package.json')
+    .then(response => response.text())
+    .then(text => document.body.textContent = text);
+</script>
+```
 
 #### App.serveOrigin(origin)
 
-Shortcut to the main window's [Window.serveOrigin(origin)](#windowserveoriginorigin)
+Fetches Carlo content from the specified origin instead of reading it from the
+file system, eg `http://localhost:8080`.
+This mode can be used for the fast development mode available in web frameworks.
+
+An example of adding the local `http://localhost:8080` origin:
+
+```js
+const carlo = require('carlo');
+
+carlo.launch().then(async app => {
+  app.on('exit', () => process.exit());
+  app.serveOrigin('http://localhost:8080');  // <-- fetch from the local server
+  app.serveFolder(__dirname);  // <-- won't be used
+  await app.load('index.html');
+});
+```
 
 #### App.windows()
 - `return`: <[Array]<[Window]>> Returns all currently opened windows.
@@ -264,50 +304,15 @@ Minimizes the window. Behavior is platform-specific.
 - `folder` <[string]> Folder with web content to make available to Chrome.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
-Makes the content of the given folder available to the Chrome web app.
+Same as [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix), but
+only applies to current window.
 
-An example of adding a local `www` folder along with the `node_modules`:
+#### Window.serveOrigin(base[, prefix])
+- `base` <[string]> Base to serve web content from.
+- `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
-`main.js`
-```js
-const carlo = require('carlo');
-
-carlo.launch().then(async app => {
-  app.on('exit', () => process.exit());
-  app.serveFolder(`${__dirname}/www`);
-  app.serveFolder(`${__dirname}/node_modules`, 'node_modules');
-  await app.load('index.html');
-});
-```
-***www***/`index.html`
-```html
-<style>body { white-space: pre; }</style>
-<script>
-fetch('node_modules/carlo/package.json')
-    .then(response => response.text())
-    .then(text => document.body.textContent = text);
-</script>
-```
-
-#### Window.serveOrigin(origin)
-- `origin` <[origin]> Origin to serve web content from.
-
-Fetches Carlo content from the specified origin instead of reading it from the
-file system, eg `http://localhost:8080`.
-This mode can be used for the fast development mode available in web frameworks.
-
-An example of adding the local `http://localhost:8080` origin:
-
-```js
-const carlo = require('carlo');
-
-carlo.launch().then(async app => {
-  app.on('exit', () => process.exit());
-  app.serveFolder(__dirname);  // <-- won't be used
-  app.serveOrigin('http://localhost:8080');  // <-- fetch from the local server
-  await app.load('index.html');
-});
-```
+Same as [App.serveOrigin(base[, prefix])](#appserveoriginbase-prefix), but
+only applies to current window.
 
 #### Window.setBounds(bounds)
 - `bounds` <[Object]> Window bounds:
