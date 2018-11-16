@@ -16,7 +16,7 @@
 
 'use strict';
 
-const carlo = require('../../lib/carlo');
+const carlo = require('carlo');
 const os = require('os');
 const path = require('path');
 const si = require('systeminformation');
