@@ -16,7 +16,7 @@
 
 'use strict';
 
-const carlo = require('carlo');
+const carlo = require('../../lib/carlo');
 const os = require('os');
 const path = require('path');
 const si = require('systeminformation');
@@ -28,7 +28,8 @@ async function run() {
         title: 'Systeminfo App',
         width: 1000,
         height: 500,
-        args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : []
+        args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : [],
+        localDataDir: path.join(os.homedir(), '.carlosysteminfo'),
       });
   app.on('exit', () => process.exit());
   app.serveFolder(path.join(__dirname, 'www'));
