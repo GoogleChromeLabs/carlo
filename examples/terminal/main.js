@@ -37,6 +37,8 @@ class TerminalApp {
       title: 'Terminal App',
       width: 800,
       height: 800,
+      channel: ['canary', 'stable'],
+      icon: 'app_icon.png',
       top: this.lastTop_,
       left: this.lastLeft_ });
     this.app_.on('exit', () => process.exit());

@@ -28,6 +28,8 @@ async function run() {
         title: 'Systeminfo App',
         width: 1000,
         height: 500,
+        channel: ['canary', 'stable'],
+        icon: 'app_icon.png',
         args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : [],
         localDataDir: path.join(os.homedir(), '.carlosysteminfo'),
       });

@@ -17,6 +17,7 @@
   * [App.mainWindow()](#appmainwindow)
   * [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix)
   * [App.serveOrigin(base[, prefix])](#appserveoriginbase-prefix)
+  * [App.setIcon(image)](#appseticonimage)
   * [App.windows()](#appwindows)
 - [class: Window](#class-window)
   * [Window.bounds()](#windowbounds)
@@ -51,6 +52,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
     - `'canary'` only uses Chrome SxS aka Canary.
     - `'chromium'` downloads local version of Chromium compatible with the Puppeteer used.
     - `'rXXXXXX'` a specific Chromium revision is used.
+    - `icon` <[Buffer]>|<[string]> Application icon used in the system dock.
   - `title` <[string]> Application title.
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `'.profile'`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
@@ -134,9 +136,7 @@ fetch('node_modules/carlo/package.json')
 - `base` <[string]> Base to serve web content from.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
 
-Fetches Carlo content from the specified origin instead of reading it from the
-file system, eg `http://localhost:8080`.
-This mode can be used for the fast development mode available in web frameworks.
+Fetches Carlo content from the specified origin instead of reading it from the file system, eg `http://localhost:8080`. This mode can be used for the fast development mode available in web frameworks.
 
 An example of adding the local `http://localhost:8080` origin:
 
@@ -150,6 +150,11 @@ carlo.launch().then(async app => {
   await app.load('index.html');
 });
 ```
+
+#### App.setIcon(image)
+- `image`: <[Buffer]>|<[string]> Either buffer containing png or a path to the png file on the file system.
+
+Specifies image to be used as an app icon in the dock.
 
 #### App.windows()
 - `return`: <[Array]<[Window]>> Returns all currently opened windows.
