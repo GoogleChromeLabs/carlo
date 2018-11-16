@@ -28,7 +28,6 @@ async function run() {
         title: 'Systeminfo App',
         width: 1000,
         height: 500,
-        userDataDir: path.join(os.homedir(), '.carlosysinfo'),
         args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : []
       });
   app.on('exit', () => process.exit());
