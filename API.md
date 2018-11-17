@@ -47,7 +47,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
   - `top`: <[number]> App window top offset in pixels.
   - `left` <[number]> App window left offset in pixels.
   - `bgcolor` <[string]> Background color using hex notation, defaults to `'#ffffff'`.
-  - `channel` <[Array]<[string]>> Browser to be used, defaults to `'stable'`:
+  - `channel` <[Array]<[string]>> Browser to be used, defaults to `['stable']`:
     - `'stable'` only uses locally installed stable channel Chrome.
     - `'canary'` only uses Chrome SxS aka Canary.
     - `'chromium'` downloads local version of Chromium compatible with the Puppeteer used.
