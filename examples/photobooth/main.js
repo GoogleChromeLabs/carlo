@@ -19,6 +19,7 @@
 const carlo = require('carlo');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 (async () => {
   const app = await carlo.launch(
@@ -27,10 +28,11 @@ const path = require('path');
         width: 800,
         height: 648 + 24,
         icon: 'app_icon.png',
-        channel: ['canary']
+        channel: ['canary'],
+        localDataDir: path.join(os.homedir(), '.carlophotobooth'),
       });
   app.on('exit', () => process.exit());
-  console.log('This example requires Chrome 72 (Chrome Canary) to function.').
+  console.log('This example requires Chrome 72 (Chrome Canary) to function.');
   app.serveFolder(path.join(__dirname, '/www'));
   await app.exposeFunction('saveImage', saveImage);
   await app.load('index.html');
