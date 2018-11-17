@@ -52,7 +52,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
     - `'canary'` only uses Chrome SxS aka Canary.
     - `'chromium'` downloads local version of Chromium compatible with the Puppeteer used.
     - `'rXXXXXX'` a specific Chromium revision is used.
-    - `icon` <[Buffer]>|<[string]> Application icon used in the system dock.
+    - `icon` <[Buffer]>|<[string]> Application icon to be used in the system dock. This feature is only available in Chrome M72+. One can use `'canary'` channel to see it in action before M72 hits stable.
   - `title` <[string]> Application title.
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `'.profile'`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
@@ -155,6 +155,8 @@ carlo.launch().then(async app => {
 - `image`: <[Buffer]>|<[string]> Either buffer containing png or a path to the png file on the file system.
 
 Specifies image to be used as an app icon in the dock.
+
+> This feature is only available in Chrome M72+. One can use `'canary'` channel to see it in action before M72 hits stable.
 
 #### App.windows()
 - `return`: <[Array]<[Window]>> Returns all currently opened windows.
