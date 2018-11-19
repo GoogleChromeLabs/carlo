@@ -42,6 +42,6 @@ function saveImage(base64) {
   var buffer = Buffer.from(base64, 'base64')
   if (!fs.existsSync('pictures'))
     fs.mkdirSync('pictures');
-  const fileName = path.join('pictures', new Date().toISOString() + '.jpeg');
+  const fileName = path.join('pictures', new Date().toISOString().replace(/:/g,'-') + '.jpeg');
   fs.writeFileSync(fileName, buffer);
 }
