@@ -153,15 +153,15 @@ class Rpc {
    *          the world and
    *        - returns function that should be used to send messages to the
    *          world
-   * @param {*} params Params to pass to the child world.
+   * @param {...*} args Params to pass to the child world.
    * @return {!Promise<{worldId:string, *}>} returns the handles / parameters that child
    *         world returned during the initialization.
    */
-  createWorld(transport, params) {
+  createWorld(transport, ...args) {
     const worldId = this.worldId_ + '/' + (++this.lastWorldId_);
     const sendToChild = transport(this.routeMessage_.bind(this, false));
     this.worlds_.set(worldId, sendToChild);
-    sendToChild({cookie: true, params: this.wrap_(params), worldId });
+    sendToChild({cookie: true, args: this.wrap_(args), worldId });
     return new Promise(f => this.cookieResponseCallbacks_.set(worldId, f));
   }
 
@@ -185,7 +185,7 @@ class Rpc {
   initWorld(transport, initializer) {
     this.sendToParent_ = transport(this.routeMessage_.bind(this, true));
     return new Promise(f => this.cookieCallback_ = f)
-        .then(initializer ? initializer : () => {})
+        .then(args => initializer ? initializer(...args) : undefined)
         .then(response => this.sendToParent_(
             {cookieResponse: true, worldId: this.worldId_, r: this.wrap_(response)}));
   }
@@ -346,7 +346,7 @@ class Rpc {
 
     if (payload.cookie) {
       this.worldId_ = payload.worldId;
-      this.cookieCallback_(this.unwrap_(payload.params));
+      this.cookieCallback_(this.unwrap_(payload.args));
       this.cookieCallback_ = null;
       return;
     }

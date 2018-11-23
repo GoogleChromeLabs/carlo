@@ -19,7 +19,7 @@
 const child_process = require('child_process');
 const rpc = require('./rpc');
 
-async function spawn(fileName, params) {
+async function spawn(fileName, ...args) {
   const child = child_process.fork(fileName, [], {
     detached: true, stdio: [0, 1, 2, 'ipc']
   });
@@ -28,7 +28,7 @@ async function spawn(fileName, params) {
     child.on('message', receivedFromChild);
     return child.send.bind(child);
   };
-  const { result } = await rpc.createWorld(transport, params);
+  const { result } = await rpc.createWorld(transport, ...args);
   return result;
 }
 

@@ -30,7 +30,7 @@ const {describe, xdescribe, fdescribe} = runner;
 const {it, fit, xit} = runner;
 const {beforeAll, beforeEach, afterAll, afterEach} = runner;
 
-async function createChildWorld(rpc, params, initializer) {
+async function createChildWorld(rpc, initializer, ...args) {
   let sendToParent;
   let sendToChild;
   function transport1(receivedFromChild) {
@@ -43,7 +43,7 @@ async function createChildWorld(rpc, params, initializer) {
   }
   const childRpc = new rpc.constructor();
   childRpc.initWorld(transport2, p => initializer(p, childRpc));
-  await rpc.createWorld(transport1, params);
+  await rpc.createWorld(transport1, ...args);
   return childRpc;
 }
 
@@ -212,17 +212,17 @@ describe('rpc', () => {
     const messages = [];
     class Root { hello(message) { messages.push(message); } }
     const root = rpc.handle(new Root());
-    await createChildWorld(rpc, root, p => p.hello('one'));
-    await createChildWorld(rpc, root, p => p.hello('two'));
+    await createChildWorld(rpc, p => p.hello('one'), root);
+    await createChildWorld(rpc, p => p.hello('two'), root);
     expect(messages.join(',')).toBe('one,two');
   });
   it('parent / grand child communication', async(state, test) => {
     const messages = [];
     class Root { hello(message) { messages.push(message); } }
     const root = rpc.handle(new Root());
-    await createChildWorld(rpc, root, async(p, r) => {
-      await createChildWorld(r, p, p => p.hello('one'));
-    });
+    await createChildWorld(rpc, async(p, r) => {
+      await createChildWorld(r, p => p.hello('one'), p);
+    }, root);
     expect(messages.join(',')).toBe('one');
   });
   it('child / child communication', async(state, test) => {
@@ -244,8 +244,8 @@ describe('rpc', () => {
       }
     }
     const parent = rpc.handle(new Parent());
-    await createChildWorld(rpc, parent, (p, r) => p.addChild(r.handle(new Child())));
-    await createChildWorld(rpc, parent, (p, r) => p.addChild(r.handle(new Child())));
+    await createChildWorld(rpc, (p, r) => p.addChild(r.handle(new Child())), parent);
+    await createChildWorld(rpc, (p, r) => p.addChild(r.handle(new Child())), parent);
     await new Promise(f => setTimeout(f, 0));
     await new Promise(f => setTimeout(f, 0));
     expect(messages.join(',')).toBe('hello,hello');
@@ -255,7 +255,7 @@ describe('rpc', () => {
     class Root { hello(message) { messages.push(message); } }
     const root = rpc.handle(new Root());
     let childRoot;
-    const childRpc = await createChildWorld(rpc, root, r => childRoot = r);
+    const childRpc = await createChildWorld(rpc, r => childRoot = r, root);
     childRoot.hello('hello');
 
     await new Promise(f => setTimeout(f, 0));
@@ -274,7 +274,7 @@ describe('rpc', () => {
     }
     const root = rpc.handle(new Root());
     let childRoot;
-    const childRpc = await createChildWorld(rpc, root, r => childRoot = r);
+    const childRpc = await createChildWorld(rpc, r => childRoot = r, root);
     childRoot.hello('hello').then(() => messages.push('should-not-happen'));
     await new Promise(f => setTimeout(f, 0));
     rpc.disposeWorld(childRpc.worldId_);
