@@ -216,6 +216,11 @@ describe('rpc', () => {
     await createChildWorld(rpc, p => p.hello('two'), root);
     expect(messages.join(',')).toBe('one,two');
   });
+  it('worldArgs getter', async(state, test) => {
+    const crpc = await createChildWorld(rpc, () => {}, 1, 2, 3);
+    const args = await crpc.worldArgs();
+    expect(args.join(',')).toBe('1,2,3');
+  });
   it('parent / grand child communication', async(state, test) => {
     const messages = [];
     class Root { hello(message) { messages.push(message); } }
