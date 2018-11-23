@@ -30,7 +30,7 @@ body, #terminal {
 <script>
 Terminal.applyAddon(fit);
 
-async function load({app, term}) {
+async function load(app, term) {
   // Create ui control.
   const termUI = new Terminal({cursorBlink: true});
   termUI.open(document.getElementById('terminal'));

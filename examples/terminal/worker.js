@@ -35,6 +35,12 @@ class Terminal extends EventEmitter {
     this.term_.on('data', data => this.emit('data', data));
   }
 
+  on(event, func) {
+    // EventEmitter returns heavy object that we don't want to
+    // send over the wire.
+    super.on(event, func);
+  }
+
   resize(cols, rows) {
     this.term_.resize(cols, rows);
   }

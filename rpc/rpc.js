@@ -183,26 +183,11 @@ class Rpc {
    * @param {function(...*):!Promise<*>} initializer
    */
   initWorld(transport, initializer) {
-    let callback;
-    this.worldArgsPromise_ = new Promise(f => callback = f);
     this.sendToParent_ = transport(this.routeMessage_.bind(this, true));
     return new Promise(f => this.cookieCallback_ = f)
-        .then(args => {
-          const result = initializer ? initializer(...args) : undefined;
-          callback(args);
-          return result;
-        })
+        .then(args => initializer ? initializer(...args) : undefined)
         .then(response => this.sendToParent_(
             {cookieResponse: true, worldId: this.worldId_, r: this.wrap_(response)}));
-  }
-
-  /**
-   * Returns the promise to the world arguments passed by the world creator.
-   * Same arguments that are passed into the initWorld's initializer callback.
-   * @return {!Promise<!Array<*>>}
-   */
-  worldArgs() {
-    return this.worldArgsPromise_;
   }
 
   /**
@@ -261,8 +246,7 @@ class Rpc {
    * @param {number=} maxDepth
    * @return {*}
    */
-  wrap_(param, maxDepth) {
-    maxDepth = typeof maxDepth === 'undefined' ? 1000 : maxDepth;
+  wrap_(param, maxDepth = 1000) {
     if (!maxDepth)
       throw new Error('Object reference chain is too long');
     maxDepth--;
