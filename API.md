@@ -20,6 +20,7 @@
   * [App.setIcon(image)](#appseticonimage)
   * [App.windows()](#appwindows)
 - [class: Window](#class-window)
+  * [event: 'close'](#event-close)
   * [Window.bounds()](#windowbounds)
   * [Window.bringToFront()](#windowbringtofront)
   * [Window.close()](#windowclose)
@@ -64,7 +65,7 @@ Launches the browser.
 ### class: App
 
 #### event: 'exit'
-Emitted when the App window closes.
+Emitted when the last window closes.
 
 #### App.browserForTest()
 - `return`: <[Browser]> Puppeteer browser object for testing.
@@ -164,6 +165,9 @@ Specifies image to be used as an app icon in the system dock.
 Running app guarantees to have at least one open window.
 
 ### class: Window
+
+#### event: 'close'
+Emitted when the window closes.
 
 #### Window.bounds()
 - `return`: <[Promise]<[Object]>>
