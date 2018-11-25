@@ -30,13 +30,13 @@ class Backend {
   showMyWindow(url) {
     let windowPromise = this.windows_.get(url);
     if (!windowPromise) {
-      windowPromise = this.createWindow(url);
+      windowPromise = this.createWindow_(url);
       this.windows_.set(url, windowPromise);
     }
     windowPromise.then(w => w.bringToFront());
   }
 
-  async createWindow(url) {
+  async createWindow_(url) {
     const window = await this.app_.createWindow({width: 800, height: 600, top: 200, left: 10});
     window.on('close', () => this.windows_.delete(url));
     window.load(url);
