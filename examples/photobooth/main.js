@@ -27,7 +27,7 @@ const os = require('os');
         bgcolor: '#e6e8ec',
         width: 800,
         height: 648 + 24,
-        icon: 'app_icon.png',
+        icon: path.join(__dirname, '/app_icon.png'),
         channel: ['canary'],
         localDataDir: path.join(os.homedir(), '.carlophotobooth'),
       });
