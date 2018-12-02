@@ -25,6 +25,7 @@
   * [HttpRequest.abort()](#httprequestabort)
   * [HttpRequest.continue()](#httprequestcontinue)
   * [HttpRequest.fulfill(options)](#httprequestfulfilloptions)
+  * [HttpRequest.headers()](#httprequestheaders)
   * [HttpRequest.method()](#httprequestmethod)
   * [HttpRequest.url()](#httprequesturl)
 - [class: Window](#class-window)
@@ -252,11 +253,18 @@ Proceeds with the default behavior for this request. Either serves it from the f
 
 Fulfills the network request with the given data. `Content-Length` header is generated in case it is not listed in the headers.
 
+#### HttpRequest.headers()
+- `return`: <[Object]> HTTP headers
+
+Network request headers.
+
 #### HttpRequest.method()
+- `return`: <[string]> HTTP method
 
 HTTP method of this network request (GET, POST, etc).
 
 #### HttpRequest.url()
+- `return`: <[string]> HTTP url
 
 Network request URL.
 
