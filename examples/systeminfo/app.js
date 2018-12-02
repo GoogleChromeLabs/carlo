@@ -36,10 +36,13 @@ async function run() {
           localDataDir: path.join(os.homedir(), '.carlosysteminfo'),
         });
   } catch(e) {
+    // New window is opened in the running instance.
     console.log('Reusing the running instance');
     return;
   }
   app.on('exit', () => process.exit());
+  // New windows are opened when this app is started again from command line.
+  app.on('window', window => window.load('index.html'));
   app.serveFolder(path.join(__dirname, 'www'));
   await app.exposeFunction('systeminfo', systeminfo);
   await app.load('index.html');

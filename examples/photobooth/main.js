@@ -22,7 +22,9 @@ const path = require('path');
 const os = require('os');
 
 (async () => {
-  const app = await carlo.launch(
+  let app;
+  try {
+    app = await carlo.launch(
       {
         bgcolor: '#e6e8ec',
         width: 800,
@@ -31,7 +33,14 @@ const os = require('os');
         channel: ['canary'],
         localDataDir: path.join(os.homedir(), '.carlophotobooth'),
       });
+  } catch(e) {
+    // New window is opened in the running instance.
+    console.log('Reusing the running instance');
+    return;
+  }
   app.on('exit', () => process.exit());
+  // New windows are opened when this app is started again from command line.
+  app.on('window', window => window.load('index.html'));
   console.log('This example requires Chrome 72 (Chrome Canary) to function.');
   app.serveFolder(path.join(__dirname, '/www'));
   await app.exposeFunction('saveImage', saveImage);
