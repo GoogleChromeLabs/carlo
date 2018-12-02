@@ -22,59 +22,66 @@ const {describe, xdescribe, fdescribe} = testRunner;
 const {it, fit, xit} = testRunner;
 const {beforeAll, beforeEach, afterAll, afterEach} = testRunner;
 const carlo = require('../lib/carlo');
+const {rpc} = require('../rpc');
 
 let app;
 
-beforeEach(async({server, httpsServer}) => {
+function staticHandler(data) {
+  return request => {
+    for (const entry of data) {
+      const url = new URL(request.url());
+      if (url.pathname === entry[0]) {
+        request.fulfill({ body: Buffer.from(entry[1]), headers: entry[2]});
+        return;
+      }
+    }
+    request.continue();
+  };
+}
+
+afterEach(async({server, httpsServer}) => {
   try { await app.exit(); } catch(e) {}
 });
 
-describe('app', () => {
-  it('evaluate', async(state, test) => {
+describe('app basics', () => {
+  it('evaluate', async() => {
     app = await carlo.launch();
     const ua = await app.evaluate('navigator.userAgent');
     expect(ua).toContain('HeadlessChrome');
   });
-  it('exposeFunction', async(state, test) => {
+  it('exposeFunction', async() => {
     app = await carlo.launch();
     await app.exposeFunction('foobar', () => 42);
     const result = await app.evaluate('foobar()');
     expect(result).toBe(42);
   });
-  it('load', async(state, test) => {
+  it('app load', async() => {
     app = await carlo.launch();
     await app.load('data:text/plain,hello');
     const result = await app.evaluate('document.body.textContent');
     expect(result).toBe('hello');
   });
-  it('serveFolder', async(state, test) => {
+  it('mainWindow accessor', async() => {
     app = await carlo.launch();
-    await app.serveFolder(path.join(__dirname, 'data'));
-    await app.load('index.html');
-    const result = await app.evaluate('document.body.textContent');
-    expect(result).toBe('hello world');
-  });
-  it('mainWindow', async(state, test) => {
-    app = await carlo.launch();
-    await app.serveFolder(path.join(__dirname, 'data'));
+    app.serveFolder(path.join(__dirname, 'folder'));
     await app.load('index.html');
     expect(app.mainWindow().pageForTest().url()).toBe('https://domain/index.html');
   });
-  it('createWindow', async(state, test) => {
+  it('createWindow creates window', async() => {
     app = await carlo.launch();
     let window = await app.createWindow();
     expect(window.pageForTest().url()).toBe('about:blank?seq=1');
     window = await app.createWindow();
     expect(window.pageForTest().url()).toBe('about:blank?seq=2');
   });
-  it('exitEvent', async(state, test) => {
+  it('exit event is emitted', async() => {
     app = await carlo.launch();
     let exitFired = false;
     app.on('exit', () => exitFired = true);
     await app.mainWindow().close();
     expect(exitFired).toBe(true);
   });
-  it('windowEvent', async(state, test) => {
+  it('window event is emitted', async() => {
     app = await carlo.launch();
     const windows = [];
     app.on('window', window => windows.push(window))
@@ -83,7 +90,7 @@ describe('app', () => {
     expect(window1).toBe(windows[0]);
     expect(window2).toBe(windows[1]);
   });
-  it('windowExposeFunction', async(state, test) => {
+  it('window exposeFunction', async() => {
     app = await carlo.launch();
     await app.exposeFunction('appFunc', () => 'app');
     const w1 = await app.createWindow();
@@ -95,13 +102,95 @@ describe('app', () => {
     const result2 = await w2.evaluate(async() => (await appFunc()) + self.windowFunc);
     expect(result2).toBe('appundefined');
   });
-  it('windowServeFolder', async(state, test) => {
+});
+
+describe('http serve', () => {
+  it('serveFolder works', async() => {
     app = await carlo.launch();
+    app.serveFolder(path.join(__dirname, 'folder'));
+    await app.load('index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello file');
+  });
+  it('serveFolder prefix is respected works', async() => {
+    app = await carlo.launch();
+    app.serveFolder(path.join(__dirname, 'folder'), 'prefix');
+    await app.load('prefix/index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello file');
+  });
+  it('serveOrigin works', async({server}) => {
+    app = await carlo.launch();
+    app.serveOrigin(server.PREFIX);
+    await app.load('index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello http');
+  });
+  it('serveOrigin prefix is respected', async({server}) => {
+    app = await carlo.launch();
+    app.serveOrigin(server.PREFIX, 'prefix');
+    await app.load('prefix/index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello http');
+  });
+  it('HttpRequest params', async() => {
+    app = await carlo.launch();
+    app.serveFolder(path.join(__dirname, 'folder'));
+    const log = [];
+    app.serveHandler(request => {
+      log.push({url: request.url(), method: request.method(), ua: ('User-Agent' in request.headers()) });
+      request.continue();
+    });
+    await app.load('index.html');
+    expect(JSON.stringify(log)).toBe('[{"url":"https://domain/index.html","method":"GET","ua":true}]');
+  });
+  it('serveHandler can fulfill', async() => {
+    app = await carlo.launch();
+    app.serveHandler(request => {
+      if (!request.url().endsWith('index.html')) {
+        request.continue();
+        return;
+      }
+      request.fulfill({ body: Buffer.from('hello handler') });
+    });
+    await app.load('index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello handler');
+  });
+  it('serveHandler can continue to file', async() => {
+    app = await carlo.launch();
+    app.serveHandler(request => request.continue());
+    app.serveFolder(path.join(__dirname, 'folder'));
+    await app.load('index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello file');
+  });
+  it('serveHandler can continue to http', async({server}) => {
+    app = await carlo.launch();
+    app.serveOrigin(server.PREFIX);
+    app.serveHandler(request => request.continue());
+    await app.load('index.html');
+    const result = await app.evaluate('document.body.textContent');
+    expect(result).toBe('hello http');
+  });
+  it('serveHandler can abort', async() => {
+    app = await carlo.launch();
+    app.serveHandler(request => request.abort());
+    try {
+      await app.load('index.html');
+      expect(false).toBeTruthy();
+    } catch (e) {
+      expect(e.toString()).toContain('domain/index.html');
+    }
+  });
+  it('window serveFolder', async() => {
+    app = await carlo.launch();
+
     const w1 = await app.createWindow();
-    await w1.serveFolder(path.join(__dirname, 'data'));
+    await w1.serveFolder(path.join(__dirname, 'folder'));
     await w1.load('index.html');
     const result1 = await w1.evaluate('document.body.textContent');
-    expect(result1).toBe('hello world');
+    expect(result1).toBe('hello file');
 
     const w2 = await app.createWindow();
     try {
@@ -110,6 +199,30 @@ describe('app', () => {
     } catch (e) {
       expect(e.toString()).toContain('domain/index.html');
     }
+  });
+});
+
+describe('rpc', () => {
+  it('load returns value', async() => {
+    const files = [[
+      '/index.html',
+      `<script>function load() { return 42; }</script>`
+    ]];
+    app = await carlo.launch();
+    app.serveHandler(staticHandler(files));
+    const result = await app.load('index.html');
+    expect(result).toBe(42);
+  });
+  it('load params are readable', async() => {
+    const files = [[
+      '/index.html',
+      `<script>async function load(a, b) { return (await a.val()) + (await b.val()); }</script>`
+    ]];
+    app = await carlo.launch();
+    app.serveHandler(staticHandler(files));
+    app.mainWindow().pageForTest().on('pageerror', console.error);
+    const result = await app.load('index.html', rpc.handle({val: 20}), rpc.handle({val:() => 22}));
+    expect(result).toBe(42);
   });
 });
 

@@ -15,7 +15,9 @@
  */
 
 const {TestRunner, Reporter, Matchers} = require('@pptr/testrunner');
+const {TestServer} = require('@pptr/testserver');
 
+const path = require('path');
 const carlo = require('../lib/carlo');
 carlo.enterTestMode();
 
@@ -26,6 +28,32 @@ const testRunner = new TestRunner({
 });
 const {expect} = new Matchers();
 const {beforeAll, beforeEach, afterAll, afterEach} = testRunner;
+
+beforeAll(async state => {
+  const assetsPath = path.join(__dirname, 'http');
+
+  const port = 8907 + state.parallelIndex * 2;
+  state.server = await TestServer.create(assetsPath, port);
+  state.server.PORT = port;
+  state.server.PREFIX = `http://localhost:${port}`;
+
+  const httpsPort = port + 1;
+  state.httpsServer = await TestServer.createHTTPS(assetsPath, httpsPort);
+  state.httpsServer.PORT = httpsPort;
+  state.httpsServer.PREFIX = `https://localhost:${httpsPort}`;
+});
+
+afterAll(async({server, httpsServer}) => {
+  await Promise.all([
+    server.stop(),
+    httpsServer.stop(),
+  ]);
+});
+
+beforeEach(async({server, httpsServer}) => {
+  server.reset();
+  httpsServer.reset();
+});
 
 require('./app.spec.js').addTests({testRunner, expect});
 require('./color.spec.js').addTests({testRunner, expect});

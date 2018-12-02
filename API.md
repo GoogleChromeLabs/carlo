@@ -17,9 +17,16 @@
   * [App.load(uri[, ...params])](#apploaduri-params)
   * [App.mainWindow()](#appmainwindow)
   * [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix)
+  * [App.serveHandler(handler)](#appservehandlerhandler)
   * [App.serveOrigin(base[, prefix])](#appserveoriginbase-prefix)
   * [App.setIcon(image)](#appseticonimage)
   * [App.windows()](#appwindows)
+- [class: HttpRequest](#class-httprequest)
+  * [HttpRequest.abort()](#httprequestabort)
+  * [HttpRequest.continue()](#httprequestcontinue)
+  * [HttpRequest.fulfill(options)](#httprequestfulfilloptions)
+  * [HttpRequest.method()](#httprequestmethod)
+  * [HttpRequest.url()](#httprequesturl)
 - [class: Window](#class-window)
   * [event: 'close'](#event-close)
   * [Window.bounds()](#windowbounds)
@@ -33,6 +40,7 @@
   * [Window.minimize()](#windowminimize)
   * [Window.pageForTest()](#windowpagefortest)
   * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
+  * [Window.serveHandler(handler)](#windowservehandlerhandler)
   * [Window.serveOrigin(base[, prefix])](#windowserveoriginbase-prefix)
   * [Window.setBounds(bounds)](#windowsetboundsbounds)
 
@@ -98,8 +106,40 @@ Shortcut to the main window's [Window.evaluate(pageFunction[, ...args])](#window
 Closes the browser window.
 
 #### App.exposeFunction(name, carloFunction)
+- `name` <[string]> Name of the function on the window object.
+- `carloFunction` <[function]> Callback function which will be called in Carlo's context.
+- `return`: <[Promise]>
 
-Shortcut to the main window's [Window.exposeFunction(name, carloFunction)](#windowexposefunctionname-carlofunction)
+The method adds a function called `name` on the pages' `window` object.
+When called, the function executes `carloFunction` in Node.js and returns a [Promise] which resolves to the return value of `carloFunction`.
+
+If the `carloFunction` returns a [Promise], it will be awaited.
+
+> **NOTE** Functions installed via `App.exposeFunction` survive navigations.
+
+An example of adding an `md5` function into the page:
+
+`main.js`
+```js
+const carlo = require('carlo');
+const crypto = require('crypto');
+
+carlo.launch().then(async app => {
+  app.on('exit', () => process.exit());
+  app.serveFolder(__dirname);
+  await app.exposeFunction('md5', text =>  // <-- expose function
+    crypto.createHash('md5').update(text).digest('hex')
+  );
+  await app.load('index.html');
+});
+```
+
+`index.html`
+```html
+<script>
+md5('digest').then(result => document.body.textContent = result);
+</script>
+```
 
 #### App.load(uri[, ...params])
 
@@ -140,6 +180,27 @@ fetch('node_modules/carlo/package.json')
 </script>
 ```
 
+#### App.serveHandler(handler)
+- `handler` <[Function]> Network handler callback accepting the [HttpRequest](#class-httprequest) parameter.
+
+An example serving primitive `index.html`:
+```js
+const carlo = require('carlo');
+
+carlo.launch().then(async app => {
+  app.on('exit', () => process.exit());
+  app.serveHandler(request => {
+    if (request.url().endsWith('/index.html'))
+      request.fulfill({body: Buffer.from('<html>Hello World</hmtl>')});
+    else
+      request.continue();  // <-- user needs to resolve each request, otherwise it'll time out.
+  });
+  await app.load('index.html');  // <-- loads index.html served above.
+});
+```
+
+Handler function is called with every network request in this app. It can abort, continue of fulfill each request. Only single app-wide handler can be registered.
+
 #### App.serveOrigin(base[, prefix])
 - `base` <[string]> Base to serve web content from.
 - `prefix` <[string]> Prefix of the URL path to serve from the given folder.
@@ -170,6 +231,34 @@ Specifies image to be used as an app icon in the system dock.
 - `return`: <[Array]<[Window]>> Returns all currently opened windows.
 
 Running app guarantees to have at least one open window.
+
+### class: HttpRequest
+
+Handlers registered via [App.serveHandler](#appservehandlerhandler) and [Window.serveHandler](#windowservehandlerhandler) receive parameter of this upon every network request.
+
+#### HttpRequest.abort()
+
+Aborts request.
+
+#### HttpRequest.continue()
+
+Proceeds with the default behavior for this request. Either serves it from the filesystem or defers to the browser.
+
+#### HttpRequest.fulfill(options)
+- `options`: <[Promise]<[Object]>>
+  - `status` <[number]> HTTP status code (200, 304, etc), optional, defaults to 200.
+  - `headers` <[Object]> HTTP response headers
+  - `body` <[Buffer]> Response body.
+
+Fulfills the network request with the given data. `Content-Length` header is generated in case it is not listed in the headers.
+
+#### HttpRequest.method()
+
+HTTP method of this network request (GET, POST, etc).
+
+#### HttpRequest.url()
+
+Network request URL.
 
 ### class: Window
 
@@ -229,36 +318,10 @@ console.log(await window.evaluate(`1 + ${x}`));  // prints "11"
 - `carloFunction` <[function]> Callback function which will be called in Carlo's context.
 - `return`: <[Promise]>
 
-The method adds a function called `name` on the page's `window` object.
-When called, the function executes `carloFunction` in Node.js and returns a [Promise] which resolves to the return value of `carloFunction`.
-
-If the `carloFunction` returns a [Promise], it will be awaited.
+Same as [App.exposeFunction](#appexposefunctionname-carlofunction), but only applies to
+the current window.
 
 > **NOTE** Functions installed via `Window.exposeFunction` survive navigations.
-
-An example of adding an `md5` function into the page:
-
-`main.js`
-```js
-const carlo = require('carlo');
-const crypto = require('crypto');
-
-carlo.launch().then(async app => {
-  app.on('exit', () => process.exit());
-  app.serveFolder(__dirname);
-  await app.exposeFunction('md5', text =>  // <-- expose function
-    crypto.createHash('md5').update(text).digest('hex')
-  );
-  await app.load('index.html');
-});
-```
-
-`index.html`
-```html
-<script>
-md5('digest').then(result => document.body.textContent = result);
-</script>
-```
 
 #### Window.fullscreen()
 - `return`: <[Promise]>
@@ -331,6 +394,12 @@ Minimizes the window. Behavior is platform-specific.
 
 Same as [App.serveFolder(folder[, prefix])](#appservefolderfolder-prefix), but
 only applies to current window.
+
+#### Window.serveHandler(handler)
+- `handler` <[Function]> Network handler callback accepting the [HttpRequest](#class-httprequest) parameter.
+
+Same as [App.serveHandler(handler)](#appservehandlerhandler), but only applies to the current window requests.
+Only single window-level handler can be installed in window.
 
 #### Window.serveOrigin(base[, prefix])
 - `base` <[string]> Base to serve web content from.
