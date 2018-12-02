@@ -22,17 +22,23 @@ const path = require('path');
 const si = require('systeminformation');
 
 async function run() {
-  const app = await carlo.launch(
-      {
-        bgcolor: '#2b2e3b',
-        title: 'Systeminfo App',
-        width: 1000,
-        height: 500,
-        channel: ['canary', 'stable'],
-        icon: path.join(__dirname, '/app_icon.png'),
-        args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : [],
-        localDataDir: path.join(os.homedir(), '.carlosysteminfo'),
-      });
+  let app;
+  try {
+    app = await carlo.launch(
+        {
+          bgcolor: '#2b2e3b',
+          title: 'Systeminfo App',
+          width: 1000,
+          height: 500,
+          channel: ['canary', 'stable'],
+          icon: path.join(__dirname, '/app_icon.png'),
+          args: process.env.DEV === 'true' ? ['--auto-open-devtools-for-tabs'] : [],
+          localDataDir: path.join(os.homedir(), '.carlosysteminfo'),
+        });
+  } catch(e) {
+    console.log('Reusing the running instance');
+    return;
+  }
   app.on('exit', () => process.exit());
   app.serveFolder(path.join(__dirname, 'www'));
   await app.exposeFunction('systeminfo', systeminfo);

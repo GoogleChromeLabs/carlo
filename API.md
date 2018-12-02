@@ -8,6 +8,7 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
+  * [event: 'window'](#window-exit)
   * [App.browserForTest()](#appbrowserfortest)
   * [App.createWindow(options)](#appcreatewindowoptions)
   * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
@@ -66,6 +67,12 @@ Launches the browser.
 
 #### event: 'exit'
 Emitted when the last window closes.
+
+#### event: 'window'
+Emitted when the new window opens. This can happen in the following situations:
+- [App.createWindow](#appcreatewindowoptions) was called.
+- [carlo.launch](#carlolaunchoptions) was called from the same or another instance of the Node app.
+- [window.open](https://developer.mozilla.org/en-US/docs/Web/API/Window/open) was called from within the web page.
 
 #### App.browserForTest()
 - `return`: <[Browser]> Puppeteer browser object for testing.

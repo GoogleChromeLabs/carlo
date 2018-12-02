@@ -11,12 +11,13 @@
   },
   "scripts": {
     "lint": "([ \"$CI\" = true ] && eslint --quiet -f codeframe . || eslint .)",
-    "test": "node rpc/test.js lib/test.js"
+    "test": "node rpc/test.js && node test/test.js"
   },
   "keywords": [],
   "author": "The Chromium Authors",
   "license": "Apache-2.0",
   "dependencies": {
+    "debug": "^4.1.0",
     "puppeteer-core": "^1.9.0"
   },
   "devDependencies": {

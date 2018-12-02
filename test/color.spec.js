@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-const {TestRunner, Reporter, Matchers} = require('@pptr/testrunner');
-const { Color } = require('./color.js');
+module.exports.addTests = function({testRunner, expect}) {
 
-// Runner holds and runs all the tests
-const runner = new TestRunner({
-  parallel: 2, // run 2 parallel threads
-  timeout: 1000, // setup timeout of 1 second per test
-});
-// Simple expect-like matchers
-const {expect} = new Matchers();
-
-// Extract jasmine-like DSL into the global namespace
-const {describe, xdescribe, fdescribe} = runner;
-const {it, fit, xit} = runner;
-const {beforeAll, beforeEach, afterAll, afterEach} = runner;
+const {describe, xdescribe, fdescribe} = testRunner;
+const {it, fit, xit} = testRunner;
+const {Color} = require('../lib/color');
 
 describe('color', () => {
-  it('asString', async(state, test) => {
+  it('rgb1', async(state, test) => {
     color = Color.parse('rgb(94, 126, 91)');
     expect(color.asString(Color.Format.RGB)).toBe('rgb(94, 126, 91)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(94, 126, 91, 1)');
@@ -42,7 +32,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('rgb(94, 126, 91)');
-
+  });
+  it('rgb2', async(state, test) => {
     color = Color.parse('rgba(94 126 91)');
     expect(color.asString(Color.Format.RGB)).toBe('rgba(94 126 91)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(94, 126, 91, 1)');
@@ -53,7 +44,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('rgb(94, 126, 91)');
-
+  });
+  it('rgb3', async(state, test) => {
     color = Color.parse('rgba(94, 126, 91, 0.5)');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(94, 126, 91, 0.5)');
@@ -64,7 +56,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('rgba(94, 126, 91, 0.5)');
-
+  });
+  it('rgb4', async(state, test) => {
     color = Color.parse('rgb(94 126 91 / 50%)');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgb(94 126 91 / 50%)');
@@ -75,7 +68,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('rgba(94, 126, 91, 0.5)');
-
+  });
+  it('hsl1', async(state, test) => {
     color = Color.parse('hsl(212, 55%, 32%)');
     expect(color.asString(Color.Format.RGB)).toBe('rgb(37, 79, 126)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(37, 79, 126, 1)');
@@ -86,7 +80,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('hsl(212, 55%, 32%)');
-
+  });
+  it('hsl2', async(state, test) => {
     color = Color.parse('hsla(212 55% 32%)');
     expect(color.asString(Color.Format.RGB)).toBe('rgb(37, 79, 126)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(37, 79, 126, 1)');
@@ -97,7 +92,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('hsl(212, 55%, 32%)');
-
+  });
+  it('hsl3', async(state, test) => {
     color = Color.parse('hsla(212, 55%, 32%, 0.5)');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(37, 79, 126, 0.5)');
@@ -108,7 +104,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('hsla(212, 55%, 32%, 0.5)');
-
+  });
+  it('hsl4', async(state, test) => {
     color = Color.parse('hsla(212  55%  32% /  50%)');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(37, 79, 126, 0.5)');
@@ -119,7 +116,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('hsla(212, 55%, 32%, 0.5)');
-
+  });
+  it('hsl5', async(state, test) => {
     color = Color.parse('hsla(212deg 55% 32% / 50%)');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(37, 79, 126, 0.5)');
@@ -130,7 +128,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('hsla(212, 55%, 32%, 0.5)');
-
+  });
+  it('hex1', async(state, test) => {
     color = Color.parse('#12345678');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(18, 52, 86, 0.47058823529411764)');
@@ -141,7 +140,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe(null);
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('#12345678');
-
+  });
+  it('hex2', async(state, test) => {
     color = Color.parse('#00FFFF');
     expect(color.asString(Color.Format.RGB)).toBe('rgb(0, 255, 255)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(0, 255, 255, 1)');
@@ -152,7 +152,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe('#0fff');
     expect(color.asString(Color.Format.ShortHEX)).toBe('#0ff');
     expect(color.asString()).toBe('#00ffff');
-
+  });
+  it('hex3', async(state, test) => {
     color = Color.parse('#1234');
     expect(color.asString(Color.Format.RGB)).toBe(null);
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(17, 34, 51, 0.26666666666666666)');
@@ -163,7 +164,8 @@ describe('color', () => {
     expect(color.asString(Color.Format.ShortHEXA)).toBe('#1234');
     expect(color.asString(Color.Format.ShortHEX)).toBe(null);
     expect(color.asString()).toBe('#1234');
-
+  });
+  it('hex4', async(state, test) => {
     color = Color.parse('#0FF');
     expect(color.asString(Color.Format.RGB)).toBe('rgb(0, 255, 255)');
     expect(color.asString(Color.Format.RGBA)).toBe('rgba(0, 255, 255, 1)');
@@ -177,8 +179,4 @@ describe('color', () => {
   });
 });
 
-// Reporter subscribes to TestRunner events and displays information in terminal
-new Reporter(runner);
-
-// Run all tests.
-runner.run();
+};
