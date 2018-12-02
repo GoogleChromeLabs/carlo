@@ -8,7 +8,7 @@
 - [carlo.launch([options])](#carlolaunchoptions)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
-  * [event: 'window'](#window-exit)
+  * [event: 'window'](#event-window)
   * [App.browserForTest()](#appbrowserfortest)
   * [App.createWindow(options)](#appcreatewindowoptions)
   * [App.evaluate(pageFunction[, ...args])](#appevaluatepagefunction-args)
@@ -78,6 +78,8 @@ Launches the browser.
 Emitted when the last window closes.
 
 #### event: 'window'
+- <[Window]>
+
 Emitted when the new window opens. This can happen in the following situations:
 - [App.createWindow](#appcreatewindowoptions) was called.
 - [carlo.launch](#carlolaunchoptions) was called from the same or another instance of the Node app.
@@ -200,7 +202,7 @@ carlo.launch().then(async app => {
 });
 ```
 
-Handler function is called with every network request in this app. It can abort, continue of fulfill each request. Only single app-wide handler can be registered.
+Handler function is called with every network request in this app. It can abort, continue or fulfill each request. Only single app-wide handler can be registered.
 
 #### App.serveOrigin(base[, prefix])
 - `base` <[string]> Base to serve web content from.
@@ -238,6 +240,7 @@ Running app guarantees to have at least one open window.
 Handlers registered via [App.serveHandler](#appservehandlerhandler) and [Window.serveHandler](#windowservehandlerhandler) receive parameter of this upon every network request.
 
 #### HttpRequest.abort()
+- `return`: <[Promise]>
 
 Aborts request.
 
@@ -246,12 +249,13 @@ Aborts request.
 Proceeds with the default behavior for this request. Either serves it from the filesystem or defers to the browser.
 
 #### HttpRequest.fulfill(options)
-- `options`: <[Promise]<[Object]>>
-  - `status` <[number]> HTTP status code (200, 304, etc), optional, defaults to 200.
-  - `headers` <[Object]> HTTP response headers
+- `options`: <[Object]>
+  - `status` <[number]> HTTP status code (200, 304, etc), defaults to 200.
+  - `headers` <[Object]> HTTP response headers.
   - `body` <[Buffer]> Response body.
+- `return`: <[Promise]>
 
-Fulfills the network request with the given data. `Content-Length` header is generated in case it is not listed in the headers.
+Fulfills the network request with the given data. `'Content-Length'` header is generated in case it is not listed in the headers.
 
 #### HttpRequest.headers()
 - `return`: <[Object]> HTTP headers
@@ -264,7 +268,7 @@ Network request headers.
 HTTP method of this network request (GET, POST, etc).
 
 #### HttpRequest.url()
-- `return`: <[string]> HTTP url
+- `return`: <[string]> HTTP URL
 
 Network request URL.
 
