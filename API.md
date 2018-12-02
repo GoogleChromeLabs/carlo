@@ -40,6 +40,7 @@
   * [Window.maximize()](#windowmaximize)
   * [Window.minimize()](#windowminimize)
   * [Window.pageForTest()](#windowpagefortest)
+  * [Window.paramsForReuse()](#windowparamsforreuse)
   * [Window.serveFolder(folder[, prefix])](#windowservefolderfolder-prefix)
   * [Window.serveHandler(handler)](#windowservehandlerhandler)
   * [Window.serveOrigin(base[, prefix])](#windowserveoriginbase-prefix)
@@ -64,6 +65,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
     - `'chromium'` downloads local version of Chromium compatible with the Puppeteer used.
     - `'rXXXXXX'` a specific Chromium revision is used.
   - `icon` <[Buffer]|[string]> Application icon to be used in the system dock. Either buffer containing PNG or a path to the PNG file on the file system. This feature is only available in Chrome M72+. One can use `'canary'` channel to see it in action before M72 hits stable.
+  - `paramsForReuse` <\*> Optional parameters to share between Carlo instances. See [Window.paramsForReuse](#windowparamsforreuse) for details.
   - `title` <[string]> Application title.
   - `userDataDir` <[string]> Path to a [User Data Directory](https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md). This folder is created upon the first app launch and contains user settings and Web storage data. Defaults to `'.profile'`.
   - `executablePath` <[string]> Path to a Chromium or Chrome executable to run instead of the automatically located Chrome. If `executablePath` is a relative path, then it is resolved relative to [current working directory](https://nodejs.org/api/process.html#process_process_cwd). Carlo is only guaranteed to work with the latest Chrome stable version.
@@ -342,9 +344,9 @@ Turns the window into the full screen mode. Behavior is platform-specific.
 
 #### Window.load(uri[, ...params])
 - `uri` <[string]> Path to the resource relative to the folder passed into [`serveFolder()`].
-- `params` <*> Optional parameters to pass to the web application. Parameters can be
+- `params` <\*> Optional parameters to pass to the web application. Parameters can be
 primitive types, <[Array]>, <[Object]> or [rpc](https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md) `handles`.
-- `return`: <[Promise]&lt;*>> Result of the `load()` invocation, can be rpc handle.
+- `return`: <[Promise]<\*>> Result of the `load()` invocation, can be rpc handle.
 
 Navigates the Chrome web app to the given `uri`, loads the target page and calls the `load()`
 function, provided by this page, in its context.
@@ -399,6 +401,18 @@ Minimizes the window. Behavior is platform-specific.
 
 #### Window.pageForTest()
 - `return`: <[Page]> Puppeteer page object for testing.
+
+#### Window.paramsForReuse()
+- `return`: <\*> parameters.
+
+Returns the `options.paramsForReuse` value passed into the [carlo.launch](#carlolaunchoptions).
+
+These parameters are useful when Carlo app is started multiple times:
+- First time the Carlo app is started, it successfully calls `carlo.launch` and opens the main window.
+- Second time the Carlo app is started, `carlo.launch` fails with the 'browser is already running' exception.
+- Despite the fact that second call to `carlo.launch` failed, a new window is created in the first Carlo app. This window contains `paramsForReuse` value that was specified in the second (failed) `carlo.launch` call.
+
+This way app can pass initialization parameters such as command line, etc. to the singleton Carlo that owns the browser.
 
 #### Window.serveFolder(folder[, prefix])
 - `folder` <[string]> Folder with web content to make available to Chrome.
