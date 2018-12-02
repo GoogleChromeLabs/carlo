@@ -248,7 +248,7 @@ Aborts request.
 
 Proceeds with the default behavior for this request. Either serves it from the filesystem or defers to the browser.
 
-#### HttpRequest.fulfill([options])
+#### HttpRequest.fulfill(options)
 - `options`: <[Object]>
   - `status` <[number]> HTTP status code (200, 304, etc), defaults to 200.
   - `headers` <[Object]> HTTP response headers.
