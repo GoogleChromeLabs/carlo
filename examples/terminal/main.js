@@ -18,7 +18,6 @@
 
 'use strict';
 
-const child_process = require('child_process');
 const carlo = require('carlo');
 const path = require('path');
 const { rpc, rpc_process } = require('carlo/rpc');

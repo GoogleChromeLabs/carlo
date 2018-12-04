@@ -19,7 +19,7 @@
 'use strict';
 
 const carlo = require('carlo');
-const { rpc, rpc_process } = require('carlo/rpc');
+const { rpc } = require('carlo/rpc');
 
 class Backend {
   constructor(app) {
