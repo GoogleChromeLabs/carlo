@@ -218,10 +218,39 @@ module.exports.addTests = function({testRunner, expect}) {
       app.serveHandler(staticHandler(files));
       let callback;
       const result = new Promise(f => callback = f);
-      app.load('index.html',
+      await app.load('index.html',
           rpc.handle({ val: 42 }),
           rpc.handle({ print: v => callback(v) }));
       expect(await result).toBe(42);
+      // Allow b.print to dispatch.
+      await new Promise(f => setTimeout(f, 0));
+    });
+    it('load params are accessible after reload', async() => {
+      const files = [[
+        '/index.html',
+        `<script>async function run() {
+           if (!window.location.search) {
+             setTimeout(() => {
+               window.location.href += '?reload';
+             }, 0);
+             return;
+           }
+           const [a, b] = await carlo.loadParams();
+           b.print(await a.val());
+         }
+         </script>
+         <body onload='run()'></body>`
+      ]];
+      app = await carlo.launch();
+      app.serveHandler(staticHandler(files));
+      let callback;
+      const result = new Promise(f => callback = f);
+      await app.load('index.html',
+          rpc.handle({ val: 42 }),
+          rpc.handle({ print: v => callback(v) }));
+      expect(await result).toBe(42);
+      // Allow b.print to dispatch.
+      await new Promise(f => setTimeout(f, 0));
     });
   });
 
