@@ -61,7 +61,7 @@ class TerminalApp {
 
   async initUI_(win) {
     const term = await rpc_process.spawn('worker.js');
-    return win.load('index.html', this.handle_, term);
+    win.load('index.html', this.handle_, term);
   }
 }
 

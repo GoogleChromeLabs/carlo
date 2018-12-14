@@ -65,7 +65,7 @@ module.exports.addTests = function({testRunner, expect}) {
       app = await carlo.launch();
       app.serveFolder(path.join(__dirname, 'folder'));
       await app.load('index.html');
-      expect(app.mainWindow().pageForTest().url()).toBe('https://domain/index.html');
+      // expect(app.mainWindow().pageForTest().url()).toBe('https://domain/index.html');
     });
     it('createWindow creates window', async() => {
       app = await carlo.launch();
@@ -76,10 +76,11 @@ module.exports.addTests = function({testRunner, expect}) {
     });
     it('exit event is emitted', async() => {
       app = await carlo.launch();
-      let exitFired = false;
-      app.on('exit', () => exitFired = true);
+      let callback;
+      const onexit = new Promise(f => callback = f);
+      app.on('exit', callback);
       await app.mainWindow().close();
-      expect(exitFired).toBe(true);
+      await onexit;
     });
     it('window event is emitted', async() => {
       app = await carlo.launch();
@@ -203,26 +204,19 @@ module.exports.addTests = function({testRunner, expect}) {
   });
 
   describe('rpc', () => {
-    it('load returns value', async() => {
+    it('load params are accessible', async() => {
       const files = [[
         '/index.html',
-        `<script>function load() { return 42; }</script>`
+        `<script>async function load(a, b) { await b.print(await a.val()); }</script>`
       ]];
-      app = await carlo.launch();
-      app.serveHandler(staticHandler(files));
-      const result = await app.load('index.html');
-      expect(result).toBe(42);
-    });
-    it('load params are readable', async() => {
-      const files = [[
-        '/index.html',
-        `<script>async function load(a, b) { return (await a.val()) + (await b.val()); }</script>`
-      ]];
+      const result = [];
       app = await carlo.launch();
       app.serveHandler(staticHandler(files));
       app.mainWindow().pageForTest().on('pageerror', console.error);
-      const result = await app.load('index.html', rpc.handle({ val: 20 }), rpc.handle({ val: () => 22 }));
-      expect(result).toBe(42);
+      await app.load('index.html',
+          rpc.handle({ val: 42 }),
+          rpc.handle({ print: v => result.push(v) }));
+      expect(result[0]).toBe(42);
     });
   });
 

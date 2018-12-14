@@ -30,7 +30,8 @@ body, #terminal {
 <script>
 Terminal.applyAddon(fit);
 
-async function load(app, term) {
+async function run() {
+  const [app, term] = await carlo.loadParams();
   // Create ui control.
   const termUI = new Terminal({cursorBlink: true});
   termUI.open(document.getElementById('terminal'));
@@ -53,7 +54,7 @@ async function load(app, term) {
 }
 </script> 
 
-<body>
+<body onload="run()">
   <div id="terminal"></div>
 </body>
 </html>

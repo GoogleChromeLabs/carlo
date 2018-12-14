@@ -17,7 +17,8 @@
 <head>
 <title>Main</title>
 <script>
-async function load(backend) {
+async function run() {
+  const [backend] = await carlo.loadParams();
   const alexaTop5 = [
       'https://google.com', 'https://youtube.com',
       'https://facebook.com', 'https://baidu.com',
@@ -32,3 +33,4 @@ async function load(backend) {
 }
 </script>
 </head>
+<body onload="run()"></body>

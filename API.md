@@ -6,6 +6,7 @@
 
 - [carlo.enterTestMode()](#carloentertestmode)
 - [carlo.launch([options])](#carlolaunchoptions)
+- [carlo.loadParams()](#carloloadparams)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
   * [event: 'window'](#event-window)
@@ -73,6 +74,11 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
 - `return`: <[Promise]<[App]>> Promise which resolves to the app instance.
 
 Launches the browser.
+
+#### carlo.loadParams()
+- `return`: <[Array]> parameters passed into [window.load()](#windowloaduri-params).
+
+This method is available in the Web world and returns parameters passed into the [window.load()](#windowloaduri-params). This is how Carlo passes initial set of <[rpc]> handles to Node objects into the web world.
 
 ### class: App
 
@@ -345,11 +351,10 @@ Turns the window into the full screen mode. Behavior is platform-specific.
 #### Window.load(uri[, ...params])
 - `uri` <[string]> Path to the resource relative to the folder passed into [`serveFolder()`].
 - `params` <\*> Optional parameters to pass to the web application. Parameters can be
-primitive types, <[Array]>, <[Object]> or [rpc](https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md) `handles`.
-- `return`: <[Promise]<\*>> Result of the `load()` invocation, can be rpc handle.
+primitive types, <[Array]>, <[Object]> or <[rpc]> `handles`.
+- `return`: <[Promise]> Resolves upon DOMContentLoaded event in the web page.
 
-Navigates the Chrome web app to the given `uri`, loads the target page and calls the `load()`
-function, provided by this page, in its context.
+Navigates the corresponding web page to the given `uri`, makes given `params` available in the web page via [carlo.loadParams()](#carloloadparams).
 
 `main.js`
 ```js
@@ -359,8 +364,7 @@ const { rpc } = require('carlo/rpc');
 carlo.launch().then(async app => {
   app.serveFolder(__dirname);
   app.on('exit', () => process.exit());
-  const frontend = await app.load('index.html', rpc.handle(new Backend));
-  console.log(await frontend.hello('from backend'));
+  await app.load('index.html', rpc.handle(new Backend));
 });
 
 class Backend {
@@ -368,22 +372,23 @@ class Backend {
     console.log(`Hello ${name}`);
     return 'Backend is happy';
   }
+
+  setFrontend(frontend) {
+    // Node world can now use frontend RPC handle.
+    this.frontend_ = frontend;
+  }
 }
 ```
 
 `index.html`
 ```html
 <script>
-class Frontend {
-  hello(name) {
-    console.log(`Hello ${name}`);
-    return 'Frontend is happy';
-  }
-}
+class Frontend {}
 
 async function load(backend) {
+  // Web world can now use backend RPC handle.
   console.log(await backend.hello('from frontend'));
-  return rpc.handle(new Frontend);
+  await backend.setFrontend(rpc.handle(new Frontend));
 }
 </script>
 <body>Open console</body>
@@ -459,4 +464,5 @@ the offset is only applied when specified.
 [function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
 [number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
+[rpc]: https://github.com/GoogleChromeLabs/carlo/blob/master/rpc/rpc.md "rpc"
 [string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "String"
