@@ -76,7 +76,7 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
 Launches the browser.
 
 #### carlo.loadParams()
-- `return`: <[Array]> parameters passed into [window.load()](#windowloaduri-params).
+- `return`: <[Promise]<[Array]>> parameters passed into [window.load()](#windowloaduri-params).
 
 This method is available in the Web world and returns parameters passed into the [window.load()](#windowloaduri-params). This is how Carlo passes initial set of <[rpc]> handles to Node objects into the web world.
 

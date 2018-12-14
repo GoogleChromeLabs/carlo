@@ -65,7 +65,7 @@ module.exports.addTests = function({testRunner, expect}) {
       app = await carlo.launch();
       app.serveFolder(path.join(__dirname, 'folder'));
       await app.load('index.html');
-      // expect(app.mainWindow().pageForTest().url()).toBe('https://domain/index.html');
+      expect(app.mainWindow().pageForTest().url()).toBe('https://domain/index.html');
     });
     it('createWindow creates window', async() => {
       app = await carlo.launch();
@@ -207,16 +207,21 @@ module.exports.addTests = function({testRunner, expect}) {
     it('load params are accessible', async() => {
       const files = [[
         '/index.html',
-        `<script>async function load(a, b) { await b.print(await a.val()); }</script>`
+        `<script>async function run() {
+           const [a, b] = await carlo.loadParams();
+           b.print(await a.val());
+         }
+         </script>
+         <body onload='run()'></body>`
       ]];
-      const result = [];
       app = await carlo.launch();
       app.serveHandler(staticHandler(files));
-      app.mainWindow().pageForTest().on('pageerror', console.error);
-      await app.load('index.html',
+      let callback;
+      const result = new Promise(f => callback = f);
+      app.load('index.html',
           rpc.handle({ val: 42 }),
-          rpc.handle({ print: v => result.push(v) }));
-      expect(result[0]).toBe(42);
+          rpc.handle({ print: v => callback(v) }));
+      expect(await result).toBe(42);
     });
   });
 
