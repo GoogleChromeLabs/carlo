@@ -203,6 +203,36 @@ module.exports.addTests = function({testRunner, expect}) {
     });
   });
 
+  describe('features', () => {
+    it('carlo.fileInfo', async() => {
+      const files = [[
+        '/index.html', `
+        <script>
+        async function check() {
+          const input = document.getElementById('file');
+          const info = await self.carlo.fileInfo(input.files[0]);
+          checkFileInfo(info);
+        }
+        </script>
+        <body><input type="file" id="file"></body>`
+      ]];
+      app = await carlo.launch({ channel: ['canary'] });
+      app.serveHandler(staticHandler(files));
+
+      let callback;
+      const result = new Promise(f => callback = f);
+      app.exposeFunction('checkFileInfo', callback);
+
+      await app.load('index.html');
+      const page = app.mainWindow().pageForTest();
+      const element = await page.evaluateHandle(`document.getElementById('file')`);
+      await element.uploadFile(__filename);
+      app.evaluate('check()');
+      const info = await result;
+      expect(info.path).toBe(__filename);
+    });
+  });
+
   describe('rpc', () => {
     it('load params are accessible', async() => {
       const files = [[

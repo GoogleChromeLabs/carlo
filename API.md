@@ -2,11 +2,10 @@
 
 > This is a pre-release API, so it is a subject to change. Please use it at your own risk. Once API is validated, it will be bumped to v1.0 and preserved for backwards compatibility.
 
-##### Table of Contents
+##### Node side API
 
 - [carlo.enterTestMode()](#carloentertestmode)
 - [carlo.launch([options])](#carlolaunchoptions)
-- [carlo.loadParams()](#carloloadparams)
 - [class: App](#class-app)
   * [event: 'exit'](#event-exit)
   * [event: 'window'](#event-window)
@@ -47,6 +46,11 @@
   * [Window.serveOrigin(base[, prefix])](#windowserveoriginbase-prefix)
   * [Window.setBounds(bounds)](#windowsetboundsbounds)
 
+##### Web side API
+
+- [carlo.fileInfo(file)](#carlofileinfofile)
+- [carlo.loadParams()](#carloloadparams)
+
 #### carlo.enterTestMode()
 
 Enters headless test mode. In the test mode, Puppeteer browser and pages are available via
@@ -74,11 +78,6 @@ Please refer to the Puppeteer [documentation](https://pptr.dev) for details on h
 - `return`: <[Promise]<[App]>> Promise which resolves to the app instance.
 
 Launches the browser.
-
-#### carlo.loadParams()
-- `return`: <[Promise]<[Array]>> parameters passed into [window.load()](#windowloaduri-params).
-
-This method is available in the Web world and returns parameters passed into the [window.load()](#windowloaduri-params). This is how Carlo passes initial set of <[rpc]> handles to Node objects into the web world.
 
 ### class: App
 
@@ -441,7 +440,7 @@ only applies to current window.
 
 #### Window.setBounds(bounds)
 - `bounds` <[Object]> Window bounds:
-  - `top`: <[number]> Top offset in pixels.
+  - `top` <[number]> Top offset in pixels.
   - `left` <[number]> Left offset in pixels.
   - `width` <[number]> Width in pixels.
   - `height` <[number]> Height in pixels.
@@ -450,11 +449,27 @@ only applies to current window.
 Sets window bounds. Parameters `top`, `left`, `width` and `height` are all optional. Dimension or
 the offset is only applied when specified.
 
+#### carlo.fileInfo(file)
+- `file` <[File]> to get additional information for.
+- `return`: <[Promise]<[Object]>>
+  - `path` absolute path to the given file.
+
+> Available in Chrome M73+.
+
+Returns additional information about the file, otherwise not available to the web.
+
+
+#### carlo.loadParams()
+- `return`: <[Promise]<[Array]>> parameters passed into [window.load()](#windowloaduri-params).
+
+This method is available in the Web world and returns parameters passed into the [window.load()](#windowloaduri-params). This is how Carlo passes initial set of <[rpc]> handles to Node objects into the web world.
+
 [`serveFolder()`]: #windowservefolderfolder-prefix
 [App]: #class-app
 [Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
 [Browser]: https://pptr.dev/#?show=api-class-browser "Browser"
 [Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
+[File]: https://developer.mozilla.org/en-US/docs/Web/API/File "File"
 [Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
 [Page]: https://pptr.dev/#?show=api-class-page "Page"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
