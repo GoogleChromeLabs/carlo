@@ -201,7 +201,7 @@ module.exports.addTests = function({testRunner, expect}) {
         expect(e.toString()).toContain('domain/index.html');
       }
     });
-    fit('navigation history is empty', async() => {
+    it('navigation history is empty', async() => {
       app = await carlo.launch({ channel: ['canary'] });
       app.serveFolder(path.join(__dirname, 'folder'));
       await app.load('index.html?1');
