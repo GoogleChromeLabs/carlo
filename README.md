@@ -14,7 +14,7 @@
 <!-- [START usecases] -->
 ###### What can I do?
 
-With Carlo users can create hybrid applications that use Web stack for rendering and Node for capabilities:
+With Carlo, users can create hybrid applications that use Web stack for rendering and Node for capabilities:
 - For Node applications, the web rendering stack lets users visualize the dynamic state of the app. 
 - For Web applications, additional system capabilities are accessible from Node.
 - The application can be bundled into a single executable using [pkg](https://github.com/zeit/pkg).
@@ -23,7 +23,7 @@ With Carlo users can create hybrid applications that use Web stack for rendering
 
 - Carlo locates Google Chrome installed locally.
 - Launches Chrome and establishes a connection over the process pipe.
-- Exposes a high level API for rendering in Chrome with the Node environment.
+- Exposes a high-level API for rendering in Chrome with the Node environment.
 
 <!-- [END usecases] -->
 
@@ -118,7 +118,7 @@ Look at the [contributing guide](https://github.com/GoogleChromeLabs/carlo/blob/
 
 #### Q: Can a Node app using Carlo be packaged as a Desktop app?
 
-The [pkg](https://github.com/zeit/pkg) project can be used to package a Node app as a Desktop app. Carlo does not provide branding configurability such as application icons or customizable menus, instead Carlo focuses on productivity and Web/Node interoperability. Check out the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) example and call `pkg package.json` to see how it works.
+The [pkg](https://github.com/zeit/pkg) project can be used to package a Node app as a Desktop app. Carlo does not provide branding configurability such as application icons or customizable menus, instead, Carlo focuses on productivity and Web/Node interoperability. Check out the [systeminfo](https://github.com/GoogleChromeLabs/carlo/tree/master/examples/systeminfo) example and call `pkg package.json` to see how it works.
 
 #### Q: What happens if the user does not have Chrome installed?
 
