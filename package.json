@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=7.6.0"
   },
+  "main": "index.js",
   "directories": {
     "lib": "lib"
   },
