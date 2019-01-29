@@ -24,6 +24,7 @@
 - [class: HttpRequest](#class-httprequest)
   * [HttpRequest.abort()](#httprequestabort)
   * [HttpRequest.continue()](#httprequestcontinue)
+  * [HttpRequest.fail()](#httprequestfail)
   * [HttpRequest.fulfill(options)](#httprequestfulfilloptions)
   * [HttpRequest.headers()](#httprequestheaders)
   * [HttpRequest.method()](#httprequestmethod)
@@ -249,11 +250,16 @@ Handlers registered via [App.serveHandler](#appservehandlerhandler) and [Window.
 #### HttpRequest.abort()
 - `return`: <[Promise]>
 
-Aborts request.
+Aborts request. If request is a navigation request, navigation is aborted as well.
 
 #### HttpRequest.continue()
 
 Proceeds with the default behavior for this request. Either serves it from the filesystem or defers to the browser.
+
+#### HttpRequest.fail()
+- `return`: <[Promise]>
+
+Marks the request as failed. If request is a navigation request, navigation is still committed, but to a location that fails to be fetched.
 
 #### HttpRequest.fulfill(options)
 - `options`: <[Object]>

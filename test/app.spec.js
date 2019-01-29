@@ -209,6 +209,24 @@ module.exports.addTests = function({testRunner, expect}) {
       await app.load('index.html?3');
       expect(await app.evaluate('history.length')).toBe(1);
     });
+    it('fail navigation', async() => {
+      app = await carlo.launch();
+      app.serveFolder(path.join(__dirname, 'folder'));
+      app.serveHandler(async request => {
+        request.url() === 'https://domain/index.html' ? request.fail() : request.continue();
+      });
+      await app.load('redirect.html');
+      expect(await app.evaluate(`window.location.href`)).toBe('chrome-error://chromewebdata/');
+    });
+    it('abort navigation', async() => {
+      app = await carlo.launch();
+      app.serveFolder(path.join(__dirname, 'folder'));
+      app.serveHandler(async request => {
+        request.url() === 'https://domain/index.html' ? request.abort() : request.continue();
+      });
+      await app.load('redirect.html');
+      expect(await app.evaluate(`window.location.href`)).toBe('https://domain/redirect.html');
+    });
   });
 
   describe('features', () => {
