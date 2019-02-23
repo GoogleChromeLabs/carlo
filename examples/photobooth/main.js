@@ -30,7 +30,7 @@ const os = require('os');
         width: 800,
         height: 648 + 24,
         icon: path.join(__dirname, '/app_icon.png'),
-        channel: ['canary'],
+        channel: ['canary', 'stable'],
         localDataDir: path.join(os.homedir(), '.carlophotobooth'),
       });
   } catch(e) {
@@ -41,7 +41,6 @@ const os = require('os');
   app.on('exit', () => process.exit());
   // New windows are opened when this app is started again from command line.
   app.on('window', window => window.load('index.html'));
-  console.log('This example requires Chrome 72 (Chrome Canary) to function.');
   app.serveFolder(path.join(__dirname, '/www'));
   await app.exposeFunction('saveImage', saveImage);
   await app.load('index.html');
