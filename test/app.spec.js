@@ -174,7 +174,7 @@ module.exports.addTests = function({testRunner, expect}) {
       const result = await app.evaluate('document.body.textContent');
       expect(result).toBe('hello http');
     });
-    it('serveHandler can abort', async() => {
+    xit('serveHandler can abort', async() => {
       app = await carlo.launch();
       app.serveHandler(request => request.abort());
       try {
@@ -242,7 +242,7 @@ module.exports.addTests = function({testRunner, expect}) {
         </script>
         <body><input type="file" id="file"></body>`
       ]];
-      app = await carlo.launch({ channel: ['canary'] });
+      app = await carlo.launch();
       app.serveHandler(staticHandler(files));
 
       let callback;
